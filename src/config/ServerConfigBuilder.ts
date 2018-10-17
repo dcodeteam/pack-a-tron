@@ -1,6 +1,6 @@
 import * as path from "path";
 
-import { ExternalsFunctionElement, Node, Output } from "webpack";
+import { ExternalsFunctionElement, Node, Options, Output } from "webpack";
 
 import { ConfigBuilder } from "./ConfigBuilder";
 
@@ -32,6 +32,19 @@ export class ServerConfigBuilder extends ConfigBuilder {
     } catch (e) {}
 
     return options;
+  }
+
+  //
+  // Optimization
+  //
+
+  protected getOptimization(): Options.Optimization {
+    return {
+      ...super.getOptimization(),
+
+      // Do not minimize server output.
+      minimize: false
+    };
   }
 
   //

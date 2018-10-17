@@ -1,6 +1,7 @@
 import * as commander from "commander";
 
 import { version } from "../../package.json";
+import { BuildTask } from "../tasks/BuildTask";
 import { StartTask } from "../tasks/StartTask";
 import { TaskContext } from "../tasks/TaskContext";
 import { parseCliConfig } from "./CliConfig";
@@ -39,8 +40,13 @@ export class Cli {
     commander
       .command("build")
       .description("build project")
-      .action(() => {
-        logger.log("Not implemented.");
+      .action(async () => {
+        const { preset } = await parseCliConfig(cwd);
+        const workspaces = await getYarnWorkspaces(cwd);
+        const ctx = new TaskContext(cwd, workspaces);
+        const task = new BuildTask(ctx, preset);
+
+        await task.run();
       });
 
     commander.parse(argv);
