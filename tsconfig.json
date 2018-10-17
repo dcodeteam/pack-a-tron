@@ -1,0 +1,33 @@
+{
+  // Setup source directory.
+  "include": ["package.json", "src/**/*.ts"],
+  "compilerOptions": {
+    // Use for debugging and error tracking.
+    "sourceMap": true,
+    // Use latest ES typings.
+    "lib": ["es2018"],
+    // Do not transpile modules.
+    "module": "es2015",
+    // Transpile with latest ES Features.
+    "target": "es2018",
+    // Allow to use node modules.
+    "moduleResolution": "node",
+
+    // Support imports from JSON files.
+    "resolveJsonModule": true,
+
+    // Strict type checks.
+    "strict": true,
+
+    // Syntetically allow to use default imports from CJS modules.
+    "allowSyntheticDefaultImports": true,
+
+    // Dead code checks.
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // Possible bug checks.
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}
