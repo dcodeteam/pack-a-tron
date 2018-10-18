@@ -83,8 +83,15 @@ export class ServerConfigBuilder extends ConfigBuilder {
 
   protected getNode(): Node {
     return {
-      __dirname: true,
-      __filename: true
+      console: false,
+      process: false,
+      global: false,
+
+      __dirname: false,
+      __filename: false,
+
+      Buffer: false,
+      setImmediate: false
     };
   }
 
