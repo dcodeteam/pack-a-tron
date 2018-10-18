@@ -27,8 +27,9 @@ export class StartTask extends BaseTask {
 
   private runServerBuild({ app, config }: AppContext): Promise<void> {
     const logger = new CliLogger(`${app} builder`, "bgCyan");
+    let compiled = false;
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       logger.log("Launching build process...");
 
       const compiler = webpack(config);
@@ -43,6 +44,13 @@ export class StartTask extends BaseTask {
           (error, stats) => {
             if (error) {
               logger.alert("Encountered an build process error.", error.stack);
+
+              if (!compiled) {
+                compiled = true;
+                reject(error);
+
+                return;
+              }
             }
 
             if (stats.hasErrors()) {
@@ -52,9 +60,12 @@ export class StartTask extends BaseTask {
               );
             } else {
               logger.log("Server build complete.");
-            }
 
-            resolve();
+              if (!compiled) {
+                compiled = true;
+                resolve();
+              }
+            }
           }
         )
       );
@@ -63,8 +74,9 @@ export class StartTask extends BaseTask {
 
   private runServer({ app, config }: AppContext): Promise<void> {
     const logger = new CliLogger(`${app} runner`, "bgGreen");
+    let launched = false;
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       logger.log("Launching process...");
 
       const script = path.join(config.output!.path!, config.output!.filename!);
@@ -89,12 +101,20 @@ export class StartTask extends BaseTask {
 
       server.on("crash", () => {
         logger.log("Process crashed.");
+
+        if (!launched) {
+          launched = true;
+          reject(new Error("Process crashed."));
+        }
       });
 
       server.on("start", () => {
         logger.log("Process launched.");
 
-        resolve();
+        if (!launched) {
+          launched = true;
+          resolve();
+        }
       });
     });
   }
