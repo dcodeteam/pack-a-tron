@@ -53,6 +53,18 @@ export class ConfigBuilder {
   }
 
   //
+  // Utility
+  //
+
+  protected tryResolve(id: string): null | string {
+    try {
+      return require.resolve(id);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  //
   // Mode
   //
 
@@ -97,10 +109,18 @@ export class ConfigBuilder {
    * Process JSON files.
    */
   protected getJsonLoader(): RuleSetRule {
-    return {
-      test: /.json$/,
-      loader: require.resolve("json-loader")
-    };
+    const use: RuleSetUse = [];
+    const jsonLoader = this.tryResolve("json-loader");
+
+    if (jsonLoader) {
+      use.push(jsonLoader);
+    }
+
+    if (use.length === 0) {
+      // TODO: Use `warning-loader`.
+    }
+
+    return { use, test: /.json$/ };
   }
 
   /**
@@ -117,6 +137,8 @@ export class ConfigBuilder {
     return {
       presets: [],
       plugins: [],
+
+      // Ignore configs.
       babelrc: false,
       configFile: false,
 
@@ -144,17 +166,17 @@ export class ConfigBuilder {
    */
   protected getJavaScriptLoader(): RuleSetRule {
     const use: RuleSetUse = [];
+    const babelLoader = this.tryResolve("babel-loader");
 
-    try {
+    if (babelLoader) {
       use.push({
         options: this.getBabelLoaderOptions(),
         loader: require.resolve("babel-loader")
       });
-    } catch (e) {
-      this.logger.alert(
-        "Failed to setup `babel-loader` for JavaScript.",
-        e.stack
-      );
+    }
+
+    if (use.length === 0) {
+      // TODO: Use `warning-loader`.
     }
 
     return {
@@ -171,25 +193,25 @@ export class ConfigBuilder {
   protected getTypeScriptLoader(): RuleSetRule {
     const use: RuleSetUse = [];
 
-    try {
+    const tsLoader = this.tryResolve("ts-loader");
+    const babelLoader = this.tryResolve("babel-loader");
+
+    if (babelLoader) {
       use.push({
-        options: this.getBabelLoaderOptions(),
-        loader: require.resolve("babel-loader")
+        loader: babelLoader,
+        options: this.getBabelLoaderOptions()
       });
-    } catch (e) {
-      this.logger.alert(
-        "Failed to setup `babel-loader` for TypeScript.",
-        e.stack
-      );
     }
 
-    try {
+    if (tsLoader) {
       use.push({
-        options: { transpileOnly: true },
-        loader: require.resolve("ts-loader")
+        loader: tsLoader,
+        options: { transpileOnly: true }
       });
-    } catch (e) {
-      this.logger.alert("Failed to setup `ts-loader` for TypeScript.", e.stack);
+    }
+
+    if (use.length === 0) {
+      // TODO: Use `warning-loader`.
     }
 
     return {
@@ -339,7 +361,7 @@ export class ConfigBuilder {
               this.getJsonLoader(),
               this.getJavaScriptLoader(),
               this.getTypeScriptLoader()
-            ].filter((x): x is RuleSetRule => x != null)
+            ]
           }
         ]
       },
