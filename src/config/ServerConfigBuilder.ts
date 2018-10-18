@@ -5,10 +5,6 @@ import { ExternalsFunctionElement, Node, Options, Output } from "webpack";
 import { ConfigBuilder } from "./ConfigBuilder";
 
 export class ServerConfigBuilder extends ConfigBuilder {
-  //
-  // Output
-  //
-
   protected getOutput(): Output {
     return {
       ...super.getOutput(),
@@ -17,26 +13,19 @@ export class ServerConfigBuilder extends ConfigBuilder {
     };
   }
 
-  //
-  // Module
-  //
-
   protected getBabelLoaderOptions() {
     const options = super.getBabelLoaderOptions();
+    const babelPresetEnv = this.tryResolve("@babel/preset-env");
 
-    try {
-      options.presets.push([
-        require.resolve("@babel/preset-env"),
+    if (babelPresetEnv) {
+      options.presets.unshift([
+        babelPresetEnv,
         { modules: false, targets: { node: "8.3.0" } }
       ]);
-    } catch (e) {}
+    }
 
     return options;
   }
-
-  //
-  // Optimization
-  //
 
   protected getOptimization(): Options.Optimization {
     return {
@@ -47,17 +36,9 @@ export class ServerConfigBuilder extends ConfigBuilder {
     };
   }
 
-  //
-  // Target
-  //
-
   protected getTarget(): "node" {
     return "node";
   }
-
-  //
-  // Externals
-  //
 
   protected getExternals(): ExternalsFunctionElement {
     return (_context, request: string, callback) => {
@@ -77,10 +58,6 @@ export class ServerConfigBuilder extends ConfigBuilder {
     };
   }
 
-  //
-  // Node
-  //
-
   protected getNode(): Node {
     return {
       console: false,
@@ -95,12 +72,7 @@ export class ServerConfigBuilder extends ConfigBuilder {
     };
   }
 
-  //
-  // Other Options
-  //
-
-  protected getBail() {
-    // Only bail in production mode.
-    return this.options.mode === "production";
+  protected getPerformance(): Options.Performance {
+    return { hints: false };
   }
 }

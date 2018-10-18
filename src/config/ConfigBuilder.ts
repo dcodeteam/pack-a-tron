@@ -52,6 +52,14 @@ export class ConfigBuilder {
     }
   }
 
+  protected get isDev() {
+    return this.options.mode === "development";
+  }
+
+  protected get isProd() {
+    return this.options.mode === "production";
+  }
+
   //
   // Utility
   //
@@ -89,15 +97,14 @@ export class ConfigBuilder {
   //
 
   protected getOutput(): Output {
-    const { mode, publicPath } = this.options;
-    const isDev = mode === "development";
+    const { publicPath } = this.options;
 
     return {
       publicPath,
       path: this.ctx.appBuild,
 
-      filename: isDev ? "[name]-bundle.js" : "[name]-[chunkhash].js",
-      chunkFilename: isDev ? "[name]-chunk.js" : "[name]-[chunkhash].js"
+      filename: "[name]-bundle.js",
+      chunkFilename: "[name]-chunk.js"
     };
   }
 
@@ -304,9 +311,7 @@ export class ConfigBuilder {
   //
 
   protected getPerformance(): undefined | Options.Performance {
-    return {
-      hints: false
-    };
+    return undefined;
   }
 
   //
@@ -314,7 +319,7 @@ export class ConfigBuilder {
   //
 
   protected getBail(): boolean {
-    return false;
+    return this.isProd;
   }
 
   public build(): Configuration {
@@ -357,6 +362,9 @@ export class ConfigBuilder {
           },
 
           {
+            // "oneOf" will traverse all following loaders until one will
+            // match the requirements. When no loader matches it will fall
+            // back to the "file" loader at the end of the loader list.
             oneOf: [
               this.getJsonLoader(),
               this.getJavaScriptLoader(),
