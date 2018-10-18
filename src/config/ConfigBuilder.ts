@@ -119,7 +119,12 @@ export class ConfigBuilder {
       plugins: [],
       babelrc: false,
       configFile: false,
+
+      // This is a feature of `babel-loader` for webpack (not Babel itself).
+      // It enables caching results in ./node_modules/.cache/babel-loader/
+      // directory for faster rebuilds.
       cacheDirectory: true,
+      // Don't waste time on Gzipping the cache
       cacheCompression: false
     };
   }
@@ -253,7 +258,7 @@ export class ConfigBuilder {
   //
 
   protected getTarget(): Configuration["target"] {
-    return "web";
+    return undefined;
   }
 
   //
@@ -316,7 +321,19 @@ export class ConfigBuilder {
        * @see https://webpack.js.org/configuration/module/
        */
       module: {
+        strictExportPresence: true,
+
         rules: [
+          // Disable require.ensure as it's not a standard language feature.
+          { parser: { requireEnsure: false } },
+
+          // Avoid "require is not defined" errors
+          {
+            test: /\.mjs$/,
+            include: /node_modules/,
+            type: "javascript/auto"
+          },
+
           {
             oneOf: [
               this.getJsonLoader(),
