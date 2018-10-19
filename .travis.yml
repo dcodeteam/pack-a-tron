@@ -30,7 +30,7 @@ deploy:
   #      tags: false
   #      node_js: "8"
   #      branch: master
-  #      repo: dcodeteam/pack-a-tron
+  #      repo: dcodeteam/pack-o-tron
 
   - provider: npm
     skip_cleanup: true
@@ -40,4 +40,4 @@ deploy:
       tags: true
       node_js: "8"
       branch: master
-      repo: dcodeteam/pack-a-tron
+      repo: dcodeteam/pack-o-tron

@@ -1,6 +1,6 @@
 {
   "license": "MIT",
-  "name": "pack-a-tron",
+  "name": "pack-o-tron",
   "version": "0.0.1",
   "engines": {
     "node": ">=8.3.0"
@@ -15,7 +15,7 @@
   ],
   "description": "Universal packaer",
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",
-  "repository": "https://github.com/dcodeteam/pack-a-tron.git",
+  "repository": "https://github.com/dcodeteam/pack-o-tron.git",
   "scripts": {
     "ci": "yarn lint && yarn dts",
     "all": "yarn lint --fix && yarn dts",

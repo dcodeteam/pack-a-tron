@@ -1,3 +1,3 @@
-# pack-a-tron
+# pack-o-tron
 
 Universal packer
