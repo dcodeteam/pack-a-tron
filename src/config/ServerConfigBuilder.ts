@@ -2,29 +2,35 @@ import * as path from "path";
 
 import { ExternalsFunctionElement, Node, Options, Output } from "webpack";
 
-import { ConfigBuilder } from "./ConfigBuilder";
+import { BabelLoader, ConfigBuilder } from "./ConfigBuilder";
 
 export class ServerConfigBuilder extends ConfigBuilder {
   protected getOutput(): Output {
     return {
       ...super.getOutput(),
+
       filename: "index.js",
-      libraryTarget: "commonjs2"
+      libraryTarget: "commonjs2",
     };
   }
 
-  protected getBabelLoaderOptions() {
-    const options = super.getBabelLoaderOptions();
-    const babelPresetEnv = this.tryResolve("@babel/preset-env");
+  protected getBabelLoader(): undefined | BabelLoader {
+    const loader = super.getBabelLoader();
 
-    if (babelPresetEnv) {
-      options.presets.unshift([
-        babelPresetEnv,
-        { modules: false, targets: { node: "8.3.0" } }
-      ]);
+    if (!loader) {
+      return undefined;
     }
 
-    return options;
+    loader.options.presets.forEach(([id, options]) => {
+      if (id.includes("@babel/preset-env")) {
+        Object.assign(options, {
+          // We want to support node 8.3.0.
+          targets: { node: "8.3.0" },
+        });
+      }
+    });
+
+    return loader;
   }
 
   protected getOptimization(): Options.Optimization {
@@ -32,7 +38,7 @@ export class ServerConfigBuilder extends ConfigBuilder {
       ...super.getOptimization(),
 
       // Do not minimize server output.
-      minimize: false
+      minimize: false,
     };
   }
 
@@ -45,12 +51,19 @@ export class ServerConfigBuilder extends ConfigBuilder {
       const isRelative = request.startsWith(".");
       const isAbsolute = path.isAbsolute(request);
       const isWebpackLoader = request.includes("!");
+      const isBabelRuntime = request.includes("@babel/runtime");
       const isWorkspace = Boolean(
-        this.workspacesNameRegExp && this.workspacesNameRegExp.test(request)
+        this.workspacesNameRegExp && this.workspacesNameRegExp.test(request),
       );
 
       // TODO: Add support for assets.
-      if (isRelative || isAbsolute || isWorkspace || isWebpackLoader) {
+      if (
+        isRelative ||
+        isAbsolute ||
+        isWorkspace ||
+        isBabelRuntime ||
+        isWebpackLoader
+      ) {
         callback(undefined, undefined);
       } else {
         callback(undefined, `commonjs ${request}`);
@@ -68,7 +81,7 @@ export class ServerConfigBuilder extends ConfigBuilder {
       __filename: false,
 
       Buffer: false,
-      setImmediate: false
+      setImmediate: false,
     };
   }
 

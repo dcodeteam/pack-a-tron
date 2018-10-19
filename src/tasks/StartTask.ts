@@ -1,28 +1,90 @@
 import * as path from "path";
 
 import webpack, { Compiler } from "webpack";
+import WebpackDevServer from "webpack-dev-server";
 
 import { AppContext, AppContextPreset } from "../app/AppContext";
 import { CliLogger } from "../cli/CliLogger";
 import { BaseTask } from "./BaseTask";
 import { TaskContext } from "./TaskContext";
 
-// eslint-disable-next-line typescript/no-var-requires
 const nodemon = require("nodemon");
 
 export class StartTask extends BaseTask {
+  private readonly ctx: TaskContext;
+
   private readonly apps: AppContext[];
 
   private readonly servers: NodeJS.EventEmitter[];
 
   private readonly watchers: Compiler.Watching[];
 
+  private readonly devServers: WebpackDevServer[];
+
   public constructor(ctx: TaskContext, preset: AppContextPreset) {
     super();
 
+    this.ctx = ctx;
     this.servers = [];
     this.watchers = [];
-    this.apps = AppContext.fromPreset("development", preset, ctx);
+    this.devServers = [];
+    this.apps = AppContext.fromPreset("development", preset, this.ctx);
+  }
+
+  private runClientBuild({ app, config }: AppContext): Promise<void> {
+    const logger = new CliLogger(`${app} builder`, "bgBlue");
+
+    const { appPort, appHost, appFullHost } = this.ctx;
+
+    return new Promise<void>((resolve, reject) => {
+      logger.log("Launching process...");
+
+      const compiler = webpack(config);
+
+      // "invalid" event fires when you have changed a file, and Webpack is
+      // recompiling a bundle. WebpackDevServer takes care to pause serving the
+      // bundle, so if you refresh, it'll wait instead of serving the old one.
+      // "invalid" is short for "bundle invalidated", it doesn't imply any errors.
+      compiler.hooks.invalid.tap("invalid", () => {
+        logger.log("Compiling...");
+      });
+
+      // "done" event fires when Webpack has finished recompiling the bundle.
+      // Whether or not you have warnings or errors, you will get this event.
+      compiler.hooks.done.tap("done", stats => {
+        if (stats.hasErrors()) {
+          logger.alert(
+            "Encountered an build error.",
+            stats.toString("errors-only"),
+          );
+        } else {
+          logger.log("Build complete.");
+        }
+      });
+
+      if (!config.devServer) {
+        throw new Error(
+          "Failed to start client: `config.devServer` is not defined.",
+        );
+      }
+
+      const devServer = new WebpackDevServer(compiler, config.devServer);
+
+      this.devServers.push(devServer);
+
+      // Start server on main application port.
+      devServer.listen(appPort, appHost, error => {
+        if (error) {
+          logger.error(error);
+
+          reject(error);
+        } else {
+          logger.log("Development server started at %s", appFullHost);
+
+          resolve();
+        }
+      });
+    });
   }
 
   private runServerBuild({ app, config }: AppContext): Promise<void> {
@@ -30,7 +92,7 @@ export class StartTask extends BaseTask {
     let compiled = false;
 
     return new Promise((resolve, reject) => {
-      logger.log("Launching build process...");
+      logger.log("Launching process...");
 
       const compiler = webpack(config);
 
@@ -39,7 +101,7 @@ export class StartTask extends BaseTask {
           {
             poll: 1000,
             aggregateTimeout: 300,
-            ignored: /node_modules/
+            ignored: /node_modules/,
           },
           (error, stats) => {
             if (error) {
@@ -56,18 +118,18 @@ export class StartTask extends BaseTask {
             if (stats.hasErrors()) {
               logger.alert(
                 "Encountered an build error.",
-                stats.toString("errors-only")
+                stats.toString("errors-only"),
               );
             } else {
-              logger.log("Server build complete.");
+              logger.log("Build complete.");
 
               if (!compiled) {
                 compiled = true;
                 resolve();
               }
             }
-          }
-        )
+          },
+        ),
       );
     });
   }
@@ -86,7 +148,7 @@ export class StartTask extends BaseTask {
         stdout: false,
         ext: "js json",
         signal: "SIGHUP",
-        cwd: path.dirname(script)
+        cwd: path.dirname(script),
       });
 
       this.servers.push(server);
@@ -120,13 +182,18 @@ export class StartTask extends BaseTask {
   }
 
   public async run() {
-    const nodeApps = this.apps.filter(x => x.config.target === "node");
+    const clientApps = this.apps.filter(x => x.config.target === "web");
+    const serverApps = this.apps.filter(x => x.config.target === "node");
 
-    // Run Builds.
-    await Promise.all(nodeApps.map(x => this.runServerBuild(x)));
+    await Promise.all([
+      // Run Server Builds.
+      ...serverApps.map(x => this.runServerBuild(x)),
+      // Run Client Builds.
+      ...clientApps.map(x => this.runClientBuild(x)),
+    ]);
 
     // Run Servers.
-    await Promise.all(nodeApps.map(x => this.runServer(x)));
+    await Promise.all(serverApps.map(x => this.runServer(x)));
   }
 
   public restart() {
@@ -142,8 +209,9 @@ export class StartTask extends BaseTask {
   public async stop(): Promise<void> {
     this.servers.map(x => x.emit("quit"));
 
-    await Promise.all(
-      this.watchers.map(x => new Promise(resolve => x.close(resolve)))
-    );
+    await Promise.all([
+      ...this.watchers.map(x => new Promise(resolve => x.close(resolve))),
+      ...this.devServers.map(x => new Promise(resolve => x.close(resolve))),
+    ]);
   }
 }

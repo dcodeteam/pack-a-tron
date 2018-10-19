@@ -10,8 +10,12 @@ import { getYarnWorkspaces, onExitSignal } from "./CliUtils";
 
 export type CliCommand = "init" | "start" | "build";
 
+export interface CliEnv {
+  readonly [key: string]: string;
+}
+
 export class Cli {
-  public static async run(cwd: string, argv: string[]) {
+  public static async run(cwd: string, env: CliEnv, argv: string[]) {
     const logger = new CliLogger("CLI", "bgCyan");
 
     commander.version(version);
@@ -29,7 +33,7 @@ export class Cli {
       .action(async () => {
         const { preset } = await parseCliConfig(cwd);
         const workspaces = await getYarnWorkspaces(cwd);
-        const ctx = new TaskContext(cwd, workspaces);
+        const ctx = new TaskContext(cwd, env, workspaces);
         const task = new StartTask(ctx, preset);
 
         onExitSignal(() => task.stop());
@@ -43,8 +47,10 @@ export class Cli {
       .action(async () => {
         const { preset } = await parseCliConfig(cwd);
         const workspaces = await getYarnWorkspaces(cwd);
-        const ctx = new TaskContext(cwd, workspaces);
+        const ctx = new TaskContext(cwd, env, workspaces);
         const task = new BuildTask(ctx, preset);
+
+        onExitSignal(() => task.stop());
 
         await task.run();
       });

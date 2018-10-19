@@ -30,16 +30,16 @@ export async function getYarnWorkspaces(cwd: string): Promise<YarnWorkspace[]> {
 
   return Object.keys(data).map<YarnWorkspace>(name => ({
     name,
-    location: data[name].location
+    location: data[name].location,
   }));
 }
 
 const EXIT_SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM"];
 
-export function onExitSignal(fn: () => void): void {
+export function onExitSignal(fn: () => void | Promise<void>): void {
   EXIT_SIGNALS.forEach(signal => {
-    process.on(signal, () => {
-      fn();
+    process.on(signal, async () => {
+      await fn();
 
       process.exit();
     });

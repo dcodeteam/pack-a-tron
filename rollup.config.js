@@ -13,7 +13,7 @@ const externals = [
   "child_process",
 
   ...Object.keys(pkg.dependencies),
-  ...Object.keys(pkg.peerDependencies)
+  ...Object.keys(pkg.peerDependencies),
 ];
 
 module.exports = {
@@ -35,12 +35,21 @@ module.exports = {
       runtimeHelpers: true,
       extensions: [".ts"],
       presets: [
-        ["@babel/preset-env", { modules: false, targets: { node: "8.3.0" } }],
-        "@babel/preset-typescript"
+        [
+          "@babel/preset-env",
+          {
+            modules: false,
+            targets: { node: "8.3.0" },
+          },
+        ],
+        "@babel/preset-typescript",
       ],
-      plugins: ["@babel/plugin-transform-runtime"]
+      plugins: [
+        ["@babel/plugin-proposal-class-properties", { loose: true }],
+        "@babel/plugin-transform-runtime",
+      ],
     }),
 
-    prettier({ parser: "babylon" })
-  ]
+    prettier({ parser: "babylon" }),
+  ],
 };

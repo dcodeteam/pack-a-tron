@@ -1,6 +1,6 @@
 {
   // Setup source directory.
-  "include": ["package.json", "src/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "compilerOptions": {
     // Use for debugging and error tracking.
     "sourceMap": true,

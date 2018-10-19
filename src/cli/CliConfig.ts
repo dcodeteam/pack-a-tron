@@ -17,14 +17,13 @@ export function parseCliConfig(cwd: string): CliConfig {
     throw new Error(`Config file "${configPath}" not found.`);
   }
 
-  // eslint-disable-next-line typescript/no-var-requires,import/no-dynamic-require,global-require
   const { preset, ...unknownProps } = require(configPath);
 
   if (!APP_CONTEXT_PRESETS.includes(preset)) {
     throw new Error(
       `Unknown preset "${preset}", expected on of ${APP_CONTEXT_PRESETS.map(
-        x => `"${x}"`
-      ).join(", ")}.`
+        x => `"${x}"`,
+      ).join(", ")}.`,
     );
   }
 
@@ -34,7 +33,7 @@ export function parseCliConfig(cwd: string): CliConfig {
     throw new Error(
       `There are ${
         unknownPropsKeys.length
-      } props in config: ${unknownPropsKeys.map(x => `"${x}"`).join(", ")}.`
+      } props in config: ${unknownPropsKeys.map(x => `"${x}"`).join(", ")}.`,
     );
   }
 

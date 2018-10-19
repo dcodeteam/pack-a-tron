@@ -2,6 +2,9 @@
   "root": true,
   "extends": "@dc0de/eslint-config",
   "rules": {
-    "no-restricted-syntax": "off"
+    "global-require": "off",
+    "no-restricted-syntax": "off",
+    "import/no-dynamic-require": "off",
+    "typescript/no-var-requires": "off"
   }
 }

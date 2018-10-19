@@ -35,9 +35,9 @@ export class BuildTask extends BaseTask {
               stats.toString({
                 all: false,
                 colors: true,
-                errors: true
-              })
-            )
+                errors: true,
+              }),
+            ),
           );
 
           return;
@@ -49,8 +49,8 @@ export class BuildTask extends BaseTask {
             stats.toString({
               all: false,
               colors: true,
-              warnings: true
-            })
+              warnings: true,
+            }),
           );
         }
 
@@ -70,8 +70,8 @@ export class BuildTask extends BaseTask {
             moduleTrace: true,
 
             timings: true,
-            warnings: true
-          })
+            warnings: true,
+          }),
         );
 
         resolve();
@@ -82,7 +82,7 @@ export class BuildTask extends BaseTask {
   public async run(): Promise<void> {
     await this.apps.reduce(
       (acc, x) => acc.then(() => this.runBuild(x)),
-      Promise.resolve()
+      Promise.resolve(),
     );
   }
 
