@@ -3,7 +3,7 @@
   "name": "pack-o-tron",
   "version": "0.0.2",
   "engines": {
-    "node": ">=8.3.0"
+    "node": ">=8.0.0"
   },
   "main": "index.js",
   "bin": {
@@ -36,8 +36,9 @@
     "webpack-dev-server": "^3.0.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
     "@babel/preset-typescript": "^7.1.0",
     "@dc0de/eslint-config": "^0.4.5",

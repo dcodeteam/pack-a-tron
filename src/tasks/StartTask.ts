@@ -5,6 +5,10 @@ import WebpackDevServer from "webpack-dev-server";
 
 import { AppContext, AppContextPreset } from "../app/AppContext";
 import { CliLogger } from "../cli/CliLogger";
+import {
+  assertWebpack,
+  assertWebpackDevServer,
+} from "../config/utils/ConfigUtils";
 import { BaseTask } from "./BaseTask";
 import { TaskContext } from "./TaskContext";
 
@@ -32,6 +36,9 @@ export class StartTask extends BaseTask {
   }
 
   private runClientBuild({ app, config }: AppContext): Promise<void> {
+    assertWebpack();
+    assertWebpackDevServer();
+
     const logger = new CliLogger(`${app} builder`, "bgBlue");
 
     const { appPort, appHost, appFullHost } = this.ctx;
@@ -88,6 +95,8 @@ export class StartTask extends BaseTask {
   }
 
   private runServerBuild({ app, config }: AppContext): Promise<void> {
+    assertWebpack();
+
     const logger = new CliLogger(`${app} builder`, "bgCyan");
     let compiled = false;
 

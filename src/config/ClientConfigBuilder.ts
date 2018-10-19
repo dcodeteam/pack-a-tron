@@ -10,6 +10,7 @@ import {
 import * as WebpackDevServer from "webpack-dev-server";
 
 import { BabelLoader, ConfigBuilder } from "./ConfigBuilder";
+import { tryResolve } from "./utils/ConfigUtils";
 
 export class ClientConfigBuilder extends ConfigBuilder {
   protected getEntry(): string[] {
@@ -19,7 +20,7 @@ export class ClientConfigBuilder extends ConfigBuilder {
       return entry;
     }
 
-    if (!this.tryResolve("react-dev-utils/webpackHotDevClient")) {
+    if (!tryResolve("react-dev-utils/webpackHotDevClient")) {
       this.logger.alert(
         "Failed to setup HRM: `react-dev-utils` not installed.",
       );
@@ -96,7 +97,7 @@ export class ClientConfigBuilder extends ConfigBuilder {
   }
 
   protected getManifestPlugin(): Plugin | undefined {
-    if (!this.tryResolve("webpack-manifest-plugin")) {
+    if (!tryResolve("webpack-manifest-plugin")) {
       this.logger.alert(
         "Failed to add manifests: `webpack-manifest-plugin` not installed.",
       );

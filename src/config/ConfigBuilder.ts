@@ -18,7 +18,7 @@ import * as WebpackDevServer from "webpack-dev-server";
 
 import { CliLogger } from "../cli/CliLogger";
 import { TaskContext } from "../tasks/TaskContext";
-import { envToRaw } from "./utils/ConfigUtils";
+import { envToRaw, tryResolve } from "./utils/ConfigUtils";
 
 export type ConfigMode = "production" | "development";
 
@@ -88,14 +88,6 @@ export class ConfigBuilder {
     return this.options.mode === "production";
   }
 
-  protected tryResolve(id: string): null | string {
-    try {
-      return require.resolve(id);
-    } catch (e) {
-      return null;
-    }
-  }
-
   //
   // Mode
   //
@@ -157,7 +149,7 @@ export class ConfigBuilder {
    */
   protected getJsonLoader(): RuleSetRule {
     const use: RuleSetUse = [];
-    const jsonLoader = this.tryResolve("json-loader");
+    const jsonLoader = tryResolve("json-loader");
 
     if (jsonLoader) {
       use.push(jsonLoader);
@@ -171,7 +163,7 @@ export class ConfigBuilder {
   }
 
   protected getBabelLoader(): undefined | BabelLoader {
-    const loader = this.tryResolve("babel-loader");
+    const loader = tryResolve("babel-loader");
 
     if (!loader) {
       return undefined;
@@ -179,7 +171,7 @@ export class ConfigBuilder {
 
     const resolveBabelDependencies = (dependencies: BabelDependency[]) =>
       dependencies.reduce<BabelDependency[]>((acc, [id, options]) => {
-        const idPath = this.tryResolve(id);
+        const idPath = tryResolve(id);
 
         if (idPath) {
           acc.push([idPath, options]);
@@ -318,7 +310,7 @@ export class ConfigBuilder {
   protected getTypeScriptLoader(): RuleSetRule {
     const use: RuleSetUse = [];
 
-    const tsLoader = this.tryResolve("ts-loader");
+    const tsLoader = tryResolve("ts-loader");
     const babelLoader = this.getBabelLoader();
 
     if (babelLoader) {

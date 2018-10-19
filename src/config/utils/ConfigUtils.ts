@@ -14,3 +14,25 @@ export function envToRaw(env: { [key: string]: unknown }): Env {
     return acc;
   }, {});
 }
+
+export function tryResolve(id: string): null | string {
+  try {
+    return require.resolve(id);
+  } catch (e) {
+    return null;
+  }
+}
+
+export function assertWebpack() {
+  if (!tryResolve("webpack")) {
+    throw new Error("Failed to run command: `webpack` is not installed.");
+  }
+}
+
+export function assertWebpackDevServer() {
+  if (!tryResolve("webpack-dev-server")) {
+    throw new Error(
+      "Failed to run command: `webpack-dev-server` is not installed.",
+    );
+  }
+}

@@ -1,17 +1,17 @@
 "use strict";
 
-const json = require("rollup-plugin-json");
-const babel = require("rollup-plugin-babel");
-const prettier = require("rollup-plugin-prettier");
-const nodeResolve = require("rollup-plugin-node-resolve");
+const babel = require("@babel/core");
+const jsonPlugin = require("rollup-plugin-json");
+const babelPlugin = require("rollup-plugin-babel");
+const prettierPlugin = require("rollup-plugin-prettier");
+const nodeResolvePlugin = require("rollup-plugin-node-resolve");
 
 const pkg = require("./package");
 
-const externals = [
-  "fs",
-  "path",
-  "child_process",
+const usedNodeBuiltins = ["fs", "path", "child_process"];
 
+const externals = [
+  ...usedNodeBuiltins,
   ...Object.keys(pkg.dependencies),
   ...Object.keys(pkg.peerDependencies),
 ];
@@ -19,18 +19,18 @@ const externals = [
 module.exports = {
   input: "./src/index.ts",
 
-  output: { format: "cjs", file: "./index.js" },
+  output: { format: "es", file: "./index.js" },
 
   external(id) {
     return externals.includes(id);
   },
 
   plugins: [
-    json(),
+    jsonPlugin(),
 
-    nodeResolve({ extensions: [".ts"] }),
+    nodeResolvePlugin({ extensions: [".ts"] }),
 
-    babel({
+    babelPlugin({
       babelrc: false,
       runtimeHelpers: true,
       extensions: [".ts"],
@@ -38,18 +38,48 @@ module.exports = {
         [
           "@babel/preset-env",
           {
+            loose: true,
             modules: false,
-            targets: { node: "8.3.0" },
+            targets: { node: "8.0.0" },
           },
         ],
         "@babel/preset-typescript",
       ],
       plugins: [
-        ["@babel/plugin-proposal-class-properties", { loose: true }],
-        "@babel/plugin-transform-runtime",
+        [
+          "@babel/plugin-proposal-object-rest-spread",
+          {
+            useBuiltIns: true,
+          },
+        ],
+        [
+          "@babel/plugin-proposal-class-properties",
+          {
+            loose: true,
+          },
+        ],
       ],
     }),
 
-    prettier({ parser: "babylon" }),
+    {
+      name: "lazyRequirePlugin",
+      renderChunk(code) {
+        return babel.transformSync(code, {
+          plugins: [
+            [
+              "@babel/plugin-transform-modules-commonjs",
+              {
+                // Do not lazy require node builtins.
+                lazy(id) {
+                  return !usedNodeBuiltins.includes(id);
+                },
+              },
+            ],
+          ],
+        });
+      },
+    },
+
+    prettierPlugin({ parser: "babylon" }),
   ],
 };

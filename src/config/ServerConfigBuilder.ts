@@ -24,8 +24,8 @@ export class ServerConfigBuilder extends ConfigBuilder {
     loader.options.presets.forEach(([id, options]) => {
       if (id.includes("@babel/preset-env")) {
         Object.assign(options, {
-          // We want to support node 8.3.0.
-          targets: { node: "8.3.0" },
+          // We want to support node 8.0.0.
+          targets: { node: "8.0.0" },
         });
       }
     });
