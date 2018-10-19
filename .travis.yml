@@ -6,38 +6,38 @@ notifications:
   email: false
 
 node_js:
-- "8"
-- "10"
+  - "8"
+  - "10"
 
 install:
-- yarn
+  - yarn
 
 before_script:
-- yarn ci
+  - yarn ci
 
 script:
-- yarn build
+  - yarn build
 
 branches:
   except:
-  - "/^v\\d+\\.\\d+\\.\\d+$/"
+    - "/^v\\d+\\.\\d+\\.\\d+$/"
 
 deploy:
-#  - provider: script
-#    skip_cleanup: true
-#    script: yarn codecov
-#    on:
-#      tags: false
-#      node_js: "8"
-#      branch: master
-#      repo: dcodeteam/pack-a-tron
+  #  - provider: script
+  #    skip_cleanup: true
+  #    script: yarn codecov
+  #    on:
+  #      tags: false
+  #      node_js: "8"
+  #      branch: master
+  #      repo: dcodeteam/pack-a-tron
 
-- provider: npm
-  skip_cleanup: true
-  email: uma.karimov@gmail.com
-  api_key: $NPM_TOKEN
-  on:
-    tags: true
-    node_js: "8"
-    branch: master
-    repo: dcodeteam/pack-a-tron
+  - provider: npm
+    skip_cleanup: true
+    email: uma.karimov@gmail.com
+    api_key: $NPM_TOKEN
+    on:
+      tags: true
+      node_js: "8"
+      branch: master
+      repo: dcodeteam/pack-a-tron
