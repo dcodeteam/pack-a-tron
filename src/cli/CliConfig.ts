@@ -7,7 +7,7 @@ export interface CliConfig {
   preset: AppContextPreset;
 }
 
-const CONFIG_FILE_NAME = "packatron.config.js";
+const CONFIG_FILE_NAME = "pack-o-tron.config.js";
 const APP_CONTEXT_PRESETS: AppContextPreset[] = ["ssr", "client", "server"];
 
 export function parseCliConfig(cwd: string): CliConfig {
