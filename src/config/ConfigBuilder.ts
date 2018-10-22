@@ -5,10 +5,12 @@ import {
   DefinePlugin,
   ExternalsFunctionElement,
   HotModuleReplacementPlugin,
+  Module,
   Node,
   Options,
   Output,
   Plugin,
+  Resolve,
   RuleSetCondition,
   RuleSetLoader,
   RuleSetRule,
@@ -88,32 +90,49 @@ export class ConfigBuilder {
     return this.options.mode === "production";
   }
 
+  protected get appIncludeCondition(): RuleSetCondition {
+    const { cwd } = this.ctx;
+    const { srcDir } = this.options.paths;
+
+    const rule: RuleSetCondition[] = [path.join(cwd, srcDir)];
+
+    if (this.workspacesPathRegExp) {
+      rule.push(this.workspacesPathRegExp);
+    }
+
+    return rule;
+  }
+
   //
-  // Mode
+  // Configuration
   //
 
+  /**
+   * @see https://webpack.js.org/concepts/mode/
+   */
   protected getMode(): ConfigMode {
     return this.options.mode;
   }
 
-  //
-  // Entry And Context
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/entry-context/#context
+   */
   protected getContext(): string {
     return this.ctx.cwd;
   }
 
+  /**
+   * @see https://webpack.js.org/configuration/entry-context/#entry
+   */
   protected getEntry(): string[] {
     const { entryFile } = this.options.paths;
 
     return [`./${entryFile}`];
   }
 
-  //
-  // Output
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/output/
+   */
   protected getOutput(): Output {
     const { cwd } = this.ctx;
     const { buildDir, publicPath } = this.options.paths;
@@ -127,25 +146,8 @@ export class ConfigBuilder {
     };
   }
 
-  //
-  // Module
-  //
-
-  protected getAppIncludeCondition(): RuleSetCondition {
-    const { cwd } = this.ctx;
-    const { srcDir } = this.options.paths;
-
-    const rule: RuleSetCondition[] = [path.join(cwd, srcDir)];
-
-    if (this.workspacesPathRegExp) {
-      rule.push(this.workspacesPathRegExp);
-    }
-
-    return rule;
-  }
-
   /**
-   * Process JSON files.
+   * @see json-loader
    */
   protected getJsonLoader(): RuleSetRule {
     const use: RuleSetUse = [];
@@ -162,6 +164,9 @@ export class ConfigBuilder {
     return { use, test: /.json$/ };
   }
 
+  /**
+   * @see babel-loader
+   */
   protected getBabelLoader(): undefined | BabelLoader {
     const loader = tryResolve("babel-loader");
 
@@ -282,7 +287,7 @@ export class ConfigBuilder {
   }
 
   /**
-   * Process JavaScript files.
+   * @see babel-loader
    */
   protected getJavaScriptLoader(): RuleSetRule {
     const use: RuleSetUse = [];
@@ -300,12 +305,12 @@ export class ConfigBuilder {
       use,
       test: /\.(js|jsx)$/,
       exclude: [/node_modules/],
-      include: this.getAppIncludeCondition(),
+      include: this.appIncludeCondition,
     };
   }
 
   /**
-   * Process TypeScript files.
+   * @see ts-loader
    */
   protected getTypeScriptLoader(): RuleSetRule {
     const use: RuleSetUse = [];
@@ -332,25 +337,60 @@ export class ConfigBuilder {
       use,
       test: /\.(ts|tsx)$/,
       exclude: [/node_modules/],
-      include: this.getAppIncludeCondition(),
+      include: this.appIncludeCondition,
     };
   }
 
-  //
-  // Resolve
-  //
-
   /**
-   *  Support TypeScript and JSX files.
+   * @see https://webpack.js.org/configuration/module/
    */
-  protected getExtensions(): string[] {
-    return [".tsx", ".ts", ".mjs", ".jsx", ".js", ".json"];
+  protected getModule(): Module {
+    return {
+      strictExportPresence: true,
+
+      rules: [
+        // Disable require.ensure as it's not a standard language feature.
+        { parser: { requireEnsure: false } },
+
+        // Avoid "require is not defined" errors
+        {
+          test: /\.mjs$/,
+          include: /node_modules/,
+          type: "javascript/auto",
+        },
+
+        {
+          // "oneOf" will traverse all following loaders until one will
+          // match the requirements. When no loader matches it will fall
+          // back to the "file" loader at the end of the loader list.
+          oneOf: [
+            this.getJsonLoader(),
+            this.getJavaScriptLoader(),
+            this.getTypeScriptLoader(),
+          ],
+        },
+      ],
+    };
   }
 
-  //
-  // Optimization
-  //
+  /**
+   * @see https://webpack.js.org/configuration/resolve/#resolve-extensions
+   */
+  protected getExtensions(): string[] {
+    // Support TypeScript and MJS files.
+    return [".tsx", ".ts", ".mjs", ".js", ".json"];
+  }
 
+  /**
+   * @see https://webpack.js.org/configuration/resolve/
+   */
+  protected getResolve(): Resolve {
+    return { extensions: this.getExtensions() };
+  }
+
+  /**
+   * @see https://webpack.js.org/configuration/optimization/
+   */
   protected getOptimization(): Options.Optimization {
     return {
       // Prevents Webpack from printing out compile time stats to the console.
@@ -360,10 +400,6 @@ export class ConfigBuilder {
       nodeEnv: this.options.mode,
     };
   }
-
-  //
-  // Plugins
-  //
 
   protected getDefinePluginEnv(): { [key: string]: unknown } {
     const { env, appProtocol, appHost, appPort, appDevPort } = this.ctx;
@@ -394,182 +430,90 @@ export class ConfigBuilder {
     return undefined;
   }
 
-  //
-  // DevServer
-  //
+  /**
+   * @see https://webpack.js.org/configuration/plugins/
+   */
+  protected getPlugins(): Plugin[] {
+    return [
+      this.getDefinePlugin(),
+      this.getManifestPlugin(),
+      this.getHotModuleReplacementPlugin(),
+    ].filter((x): x is Plugin => x != null);
+  }
 
+  /**
+   * https://webpack.js.org/configuration/dev-server/
+   */
   protected getDevServer(): undefined | WebpackDevServer.Configuration {
     return undefined;
   }
 
-  //
-  // Devtool
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/devtool/
+   */
   protected getDevTool(): Options.Devtool {
     return "source-map";
   }
 
-  //
-  // Target
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/target/
+   */
   protected getTarget(): Configuration["target"] {
     return undefined;
   }
 
-  // Watch and WatchOptions
-
+  /**
+   * @see https://webpack.js.org/configuration/watch/
+   */
   protected getWatch(): boolean {
     return this.isDev;
   }
 
-  //
-  // Externals
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/externals/#function
+   */
   protected getExternals(): undefined | ExternalsFunctionElement {
     return undefined;
   }
 
-  //
-  // Node
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/node/
+   */
   protected getNode(): undefined | Node {
     return undefined;
   }
 
-  //
-  // Performance
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/performance/
+   */
   protected getPerformance(): undefined | Options.Performance {
     return undefined;
   }
 
-  //
-  // Other Options
-  //
-
+  /**
+   * @see https://webpack.js.org/configuration/other-options/#bail
+   */
   protected getBail(): boolean {
     return this.isProd;
   }
 
   public build(): Configuration {
     return {
-      /**
-       * @see https://webpack.js.org/concepts/mode/
-       */
       mode: this.getMode(),
-
-      /**
-       * @see https://webpack.js.org/configuration/entry-context/#context
-       */
       context: this.getContext(),
-
-      /**
-       * @see https://webpack.js.org/configuration/entry-context/#entry
-       */
       entry: this.getEntry(),
-
-      /**
-       * @see https://webpack.js.org/configuration/output/
-       */
       output: this.getOutput(),
-
-      /**
-       * @see https://webpack.js.org/configuration/module/
-       */
-      module: {
-        strictExportPresence: true,
-
-        rules: [
-          // Disable require.ensure as it's not a standard language feature.
-          { parser: { requireEnsure: false } },
-
-          // Avoid "require is not defined" errors
-          {
-            test: /\.mjs$/,
-            include: /node_modules/,
-            type: "javascript/auto",
-          },
-
-          {
-            // "oneOf" will traverse all following loaders until one will
-            // match the requirements. When no loader matches it will fall
-            // back to the "file" loader at the end of the loader list.
-            oneOf: [
-              this.getJsonLoader(),
-              this.getJavaScriptLoader(),
-              this.getTypeScriptLoader(),
-            ],
-          },
-        ],
-      },
-
-      /**
-       * @see https://webpack.js.org/configuration/resolve/
-       */
-      resolve: {
-        /**
-         * @see https://webpack.js.org/configuration/resolve/#resolve-extensions
-         */
-        extensions: this.getExtensions(),
-      },
-
-      /**
-       * @see https://webpack.js.org/configuration/optimization/
-       */
+      module: this.getModule(),
+      resolve: this.getResolve(),
       optimization: this.getOptimization(),
-
-      /**
-       * @see https://webpack.js.org/configuration/plugins/
-       */
-      plugins: [
-        this.getDefinePlugin(),
-        this.getManifestPlugin(),
-        this.getHotModuleReplacementPlugin(),
-      ].filter((x): x is Plugin => x != null),
-
-      /**
-       * https://webpack.js.org/configuration/dev-server/
-       */
+      plugins: this.getPlugins(),
       devServer: this.getDevServer(),
-
-      /**
-       * @see https://webpack.js.org/configuration/devtool/
-       */
       devtool: this.getDevTool(),
-
-      /**
-       * @see https://webpack.js.org/configuration/target/
-       */
       target: this.getTarget(),
-
-      /**
-       * @see https://webpack.js.org/configuration/watch/
-       */
       watch: this.getWatch(),
-
-      /**
-       * @see https://webpack.js.org/configuration/externals/#function
-       */
       externals: this.getExternals(),
-
-      /**
-       * @see https://webpack.js.org/configuration/node/
-       */
       node: this.getNode(),
-
-      /**
-       * @see https://webpack.js.org/configuration/performance/
-       */
       performance: this.getPerformance(),
-
-      /**
-       * @see https://webpack.js.org/configuration/other-options/#bail
-       */
       bail: this.getBail(),
     };
   }
