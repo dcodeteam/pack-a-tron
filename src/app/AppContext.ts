@@ -1,15 +1,14 @@
 import { Configuration } from "webpack";
 
-import { ClientConfigBuilder } from "../config/ClientConfigBuilder";
-import { ConfigMode } from "../config/ConfigBuilder";
-import { ServerConfigBuilder } from "../config/ServerConfigBuilder";
+import { BuilderMode } from "../config/AbstractConfigBuilder";
+import { WebpackConfigBuilder } from "../config/WebpackConfigBuilder";
 import { TaskContext } from "../tasks/TaskContext";
 
 export type AppContextPreset = "server" | "ssr" | "client";
 
 export class AppContext {
   public static fromPreset(
-    mode: ConfigMode,
+    mode: BuilderMode,
     preset: AppContextPreset,
     taskContext: TaskContext,
   ): AppContext[] {
@@ -19,9 +18,10 @@ export class AppContext {
       apps.push(
         new AppContext(
           "server",
-          new ServerConfigBuilder(taskContext, {
+          new WebpackConfigBuilder({
             mode,
-
+            target: "node",
+            ctx: taskContext,
             paths: {
               srcDir: "src",
               publicPath: "/",
@@ -37,27 +37,28 @@ export class AppContext {
       apps.push(
         new AppContext(
           "server",
-          new ServerConfigBuilder(
-            taskContext.cloneWithEnv({
+          new WebpackConfigBuilder({
+            mode,
+            target: "node",
+            ctx: taskContext.cloneWithEnv({
               // Pass client `buildDir` relative to server `buildDir.
               APP_PUBLIC_DIR: "public",
             }),
-            {
-              mode,
-              paths: {
-                srcDir: "src",
-                publicPath: "/",
-                buildDir: "build",
-                entryFile: "src/server-entry",
-              },
+            paths: {
+              srcDir: "src",
+              publicPath: "/",
+              buildDir: "build",
+              entryFile: "src/server-entry",
             },
-          ).build(),
+          }).build(),
         ),
 
         new AppContext(
           "client",
-          new ClientConfigBuilder(taskContext, {
+          new WebpackConfigBuilder({
             mode,
+            target: "web",
+            ctx: taskContext,
             paths: {
               srcDir: "src",
               publicPath: "/",

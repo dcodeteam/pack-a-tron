@@ -1,4 +1,4 @@
-import * as commander from "commander";
+import { CommanderStatic } from "commander";
 
 import { version } from "../../package.json";
 import { BuildTask } from "../tasks/BuildTask";
@@ -16,6 +16,7 @@ export interface CliEnv {
 
 export class Cli {
   public static async run(cwd: string, env: CliEnv, argv: string[]) {
+    const commander: CommanderStatic = require("commander");
     const logger = new CliLogger("CLI", "bgCyan");
 
     commander.version(version);
