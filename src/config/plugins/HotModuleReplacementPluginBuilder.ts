@@ -1,6 +1,6 @@
 import { HotModuleReplacementPlugin, Plugin } from "webpack";
 
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { PluginBuilder } from "./PluginBuilder";
 
 export class HotModuleReplacementPluginBuilder extends PluginBuilder {

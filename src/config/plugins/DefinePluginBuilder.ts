@@ -1,6 +1,6 @@
 import { DefinePlugin, Plugin } from "webpack";
 
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { ManifestPluginBuilder } from "./ManifestPluginBuilder";
 import { PluginBuilder } from "./PluginBuilder";
 

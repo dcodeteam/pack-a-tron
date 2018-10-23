@@ -15,23 +15,23 @@ import {
   AbstractConfigBuilder,
   BuilderModifier,
   BuilderOptions,
-} from "./AbstractConfigBuilder";
-import { JSLoaderBuilder } from "./loaders/JSLoaderBuilder";
-import { JsonLoaderBuilder } from "./loaders/JsonLoaderBuilder";
-import { LoaderBuilder } from "./loaders/LoaderBuilder";
-import { StyleLoaderBuilder } from "./loaders/StyleLoaderBuilder";
-import { TSLoaderBuilder } from "./loaders/TSLoaderBuilder";
+} from "./abstract/AbstractConfigBuilder";
 import { ExternalsBuilder } from "./others/ExternalsBuilder";
 import { DefinePluginBuilder } from "./plugins/DefinePluginBuilder";
 import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
 import { PluginBuilder } from "./plugins/PluginBuilder";
+import { JsonRuleBuilder } from "./rules/JsonRuleBuilder";
+import { JSRuleBuilder } from "./rules/JSRuleBuilder";
+import { RuleBuilder } from "./rules/RuleBuilder";
+import { StyleRuleBuilder } from "./rules/StyleRuleBuilder";
+import { TSRuleBuilder } from "./rules/TSRuleBuilder";
 
-export class WebpackConfigBuilder extends AbstractConfigBuilder<Configuration> {
+export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
   private entry: string[];
 
   private output: Output;
 
-  private loaders: LoaderBuilder[];
+  private rules: RuleBuilder[];
 
   private resolve: Resolve;
 
@@ -52,7 +52,7 @@ export class WebpackConfigBuilder extends AbstractConfigBuilder<Configuration> {
   private performance: Options.Performance;
 
   public constructor(options: BuilderOptions) {
-    super("WebpackConfigBuilder", options);
+    super("ConfigBuilder", options);
 
     this.entry = [`./${options.paths.entryFile}`];
     this.output = {
@@ -221,29 +221,29 @@ export class WebpackConfigBuilder extends AbstractConfigBuilder<Configuration> {
 
     this.performance = { hints: false };
 
-    this.loaders = [
+    this.rules = [
       // json-loader
-      new JsonLoaderBuilder(options),
+      new JsonRuleBuilder(options),
 
       // babel-loader
-      new JSLoaderBuilder(options)
+      new JSRuleBuilder(options)
         // Load only from `src` and local workspaces.
         .includeSrc(),
 
       // ts-loader + babel-loader
-      new TSLoaderBuilder(options),
+      new TSRuleBuilder(options),
 
       // css-loader
-      new StyleLoaderBuilder(options),
+      new StyleRuleBuilder(options),
 
       // css-loader with modules
-      new StyleLoaderBuilder(options).setModules(true),
+      new StyleRuleBuilder(options).setModules(true),
 
       // sass-loader
-      new StyleLoaderBuilder(options).setPreProcessor("sass-loader"),
+      new StyleRuleBuilder(options).setPreProcessor("sass-loader"),
 
       // sass-loader with modules
-      new StyleLoaderBuilder(options)
+      new StyleRuleBuilder(options)
         .setModules(true)
         .setPreProcessor("sass-loader"),
     ];
@@ -362,8 +362,8 @@ export class WebpackConfigBuilder extends AbstractConfigBuilder<Configuration> {
     return this;
   }
 
-  public modifyLoaders(modify: BuilderModifier<LoaderBuilder[]>): this {
-    this.loaders = modify(this.loaders);
+  public modifyLoaders(modify: BuilderModifier<RuleBuilder[]>): this {
+    this.rules = modify(this.rules);
 
     return this;
   }
@@ -410,10 +410,10 @@ export class WebpackConfigBuilder extends AbstractConfigBuilder<Configuration> {
           },
 
           {
-            // "oneOf" will traverse all following loaders until one will
+            // "oneOf" will traverse all following rules until one will
             // match the requirements. When no loader matches it will fall
             // back to the "file" loader at the end of the loader list.
-            oneOf: this.loaders
+            oneOf: this.rules
               .map(x => x.build())
               .filter((x): x is RuleSetRule => x != null),
           },

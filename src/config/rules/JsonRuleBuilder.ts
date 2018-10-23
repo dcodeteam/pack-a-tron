@@ -1,10 +1,10 @@
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
-import { LoaderBuilder } from "./LoaderBuilder";
+import { RuleBuilder } from "./RuleBuilder";
 
-export class JsonLoaderBuilder extends LoaderBuilder {
+export class JsonRuleBuilder extends RuleBuilder {
   public constructor(options: BuilderOptions) {
-    super("JsonLoaderBuilder", options);
+    super("JsonRuleBuilder", options);
 
     this.test = [/\.json$/];
 

@@ -1,7 +1,7 @@
 import { Configuration } from "webpack";
 
-import { BuilderMode } from "../config/AbstractConfigBuilder";
-import { WebpackConfigBuilder } from "../config/WebpackConfigBuilder";
+import { BuilderMode } from "../config/abstract/AbstractConfigBuilder";
+import { ConfigBuilder } from "../config/ConfigBuilder";
 import { TaskContext } from "../tasks/TaskContext";
 
 export type AppContextPreset = "server" | "ssr" | "client";
@@ -18,7 +18,7 @@ export class AppContext {
       apps.push(
         new AppContext(
           "server",
-          new WebpackConfigBuilder({
+          new ConfigBuilder({
             mode,
             target: "node",
             ctx: taskContext,
@@ -37,7 +37,7 @@ export class AppContext {
       apps.push(
         new AppContext(
           "server",
-          new WebpackConfigBuilder({
+          new ConfigBuilder({
             mode,
             target: "node",
             ctx: taskContext.cloneWithEnv({
@@ -55,7 +55,7 @@ export class AppContext {
 
         new AppContext(
           "client",
-          new WebpackConfigBuilder({
+          new ConfigBuilder({
             mode,
             target: "web",
             ctx: taskContext,

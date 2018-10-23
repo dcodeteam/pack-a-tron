@@ -5,7 +5,7 @@ import { ExternalsFunctionElement } from "webpack";
 import {
   AbstractConfigBuilder,
   BuilderOptions,
-} from "../AbstractConfigBuilder";
+} from "../abstract/AbstractConfigBuilder";
 
 export class ExternalsBuilder extends AbstractConfigBuilder<
   ExternalsFunctionElement

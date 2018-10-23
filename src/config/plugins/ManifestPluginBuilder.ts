@@ -1,6 +1,6 @@
 import { Plugin } from "webpack";
 
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
 import { PluginBuilder } from "./PluginBuilder";
 

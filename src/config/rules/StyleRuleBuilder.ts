@@ -1,8 +1,8 @@
 import { RuleSetLoader } from "webpack";
 
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
-import { LoaderBuilder } from "./LoaderBuilder";
+import { RuleBuilder } from "./RuleBuilder";
 
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -10,13 +10,13 @@ const cssModuleRegex = /\.module\.css$/;
 const scssRegex = /\.scss$/;
 const scssModuleRegex = /\.module\.scss$/;
 
-export class StyleLoaderBuilder extends LoaderBuilder {
+export class StyleRuleBuilder extends RuleBuilder {
   private modules?: boolean;
 
   private preProcessor?: "sass-loader";
 
   public constructor(options: BuilderOptions) {
-    super("StyleLoaderBuilder", options);
+    super("StyleRuleBuilder", options);
 
     // Define default values.
     this.normalize();

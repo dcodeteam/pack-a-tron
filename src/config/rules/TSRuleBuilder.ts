@@ -1,11 +1,11 @@
 import { RuleSetLoader } from "webpack";
 
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
-import { JSLoaderBuilder } from "./JSLoaderBuilder";
-import { LoaderBuilder } from "./LoaderBuilder";
+import { JSRuleBuilder } from "./JSRuleBuilder";
+import { RuleBuilder } from "./RuleBuilder";
 
-export class TSLoaderBuilder extends LoaderBuilder {
+export class TSRuleBuilder extends RuleBuilder {
   public static createTSLoader(): null | RuleSetLoader {
     const loader = tryResolve("ts-loader");
 
@@ -17,17 +17,17 @@ export class TSLoaderBuilder extends LoaderBuilder {
   }
 
   public constructor(options: BuilderOptions) {
-    super("TSLoaderBuilder", options);
+    super("TSRuleBuilder", options);
 
     this.test = [/\.(ts|tsx)$/];
 
-    const tsLoader = TSLoaderBuilder.createTSLoader();
+    const tsLoader = TSRuleBuilder.createTSLoader();
 
     if (tsLoader) {
       this.use.unshift(tsLoader);
     }
 
-    const babelLoader = JSLoaderBuilder.createBabelLoader(options);
+    const babelLoader = JSRuleBuilder.createBabelLoader(options);
 
     if (babelLoader) {
       this.use.unshift(babelLoader);

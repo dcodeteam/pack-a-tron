@@ -1,7 +1,7 @@
 import * as path from "path";
 
-import { CliLogger } from "../cli/CliLogger";
-import { TaskContext } from "../tasks/TaskContext";
+import { CliLogger } from "../../cli/CliLogger";
+import { TaskContext } from "../../tasks/TaskContext";
 
 export type BuilderTarget = "web" | "node";
 export type BuilderMode = "development" | "production";

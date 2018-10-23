@@ -1,8 +1,8 @@
 import { RuleSetCondition, RuleSetLoader } from "webpack";
 
-import { BuilderOptions } from "../AbstractConfigBuilder";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
-import { LoaderBuilder } from "./LoaderBuilder";
+import { RuleBuilder } from "./RuleBuilder";
 
 export type BabelDependency<T = object> = [string, T];
 
@@ -18,7 +18,7 @@ export interface BabelLoader extends RuleSetLoader {
   };
 }
 
-export class JSLoaderBuilder extends LoaderBuilder {
+export class JSRuleBuilder extends RuleBuilder {
   public static createBabelLoader({
     mode,
     target,
@@ -149,12 +149,12 @@ export class JSLoaderBuilder extends LoaderBuilder {
   }
 
   public constructor(options: BuilderOptions) {
-    super("JSLoaderBuilder", options);
+    super("JSRuleBuilder", options);
 
     this.test = [/\.js$/];
     this.exclude = [/node_modules/];
 
-    const loader = JSLoaderBuilder.createBabelLoader(options);
+    const loader = JSRuleBuilder.createBabelLoader(options);
 
     if (loader) {
       this.use = [loader];

@@ -3,9 +3,9 @@ import { RuleSetCondition, RuleSetLoader, RuleSetRule } from "webpack";
 import {
   AbstractConfigBuilder,
   BuilderOptions,
-} from "../AbstractConfigBuilder";
+} from "../abstract/AbstractConfigBuilder";
 
-export class LoaderBuilder extends AbstractConfigBuilder<null | RuleSetRule> {
+export class RuleBuilder extends AbstractConfigBuilder<null | RuleSetRule> {
   protected use: RuleSetLoader[];
 
   protected test: RuleSetCondition[];
