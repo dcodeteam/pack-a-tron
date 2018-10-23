@@ -1,20 +1,19 @@
 import webpack from "webpack";
 
-import { AppContext, AppContextPreset } from "../app/AppContext";
+import { App } from "../app/App";
 import { CliLogger } from "../cli/CliLogger";
 import { BaseTask } from "./BaseTask";
-import { TaskContext } from "./TaskContext";
 
 export class BuildTask extends BaseTask {
-  private readonly apps: AppContext[];
+  private readonly apps: App[];
 
-  public constructor(ctx: TaskContext, preset: AppContextPreset) {
+  public constructor(apps: App[]) {
     super();
 
-    this.apps = AppContext.fromPreset("production", preset, ctx);
+    this.apps = apps;
   }
 
-  private runBuild({ app, config }: AppContext): Promise<void> {
+  private runBuild({ app, config }: App): Promise<void> {
     const logger = new CliLogger(`${app} builder`, "bgCyan");
 
     return new Promise((resolve, reject) => {

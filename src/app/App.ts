@@ -1,27 +1,27 @@
 import { Configuration } from "webpack";
 
-import { BuilderMode } from "../config/abstract/AbstractConfigBuilder";
-import { ConfigBuilder } from "../config/ConfigBuilder";
+import { BuilderMode } from "../builders/abstract/AbstractConfigBuilder";
+import { ConfigBuilder } from "../builders/ConfigBuilder";
 import { TaskContext } from "../tasks/TaskContext";
 
 export type AppContextPreset = "server" | "ssr" | "client";
 
-export class AppContext {
+export class App {
   public static fromPreset(
+    ctx: TaskContext,
     mode: BuilderMode,
     preset: AppContextPreset,
-    taskContext: TaskContext,
-  ): AppContext[] {
-    const apps: AppContext[] = [];
+  ): App[] {
+    const apps: App[] = [];
 
     if (preset === "server") {
       apps.push(
-        new AppContext(
+        new App(
           "server",
           new ConfigBuilder({
+            ctx,
             mode,
             target: "node",
-            ctx: taskContext,
             paths: {
               srcDir: "src",
               publicPath: "/",
@@ -35,12 +35,12 @@ export class AppContext {
 
     if (preset === "ssr") {
       apps.push(
-        new AppContext(
+        new App(
           "server",
           new ConfigBuilder({
             mode,
             target: "node",
-            ctx: taskContext.cloneWithEnv({
+            ctx: ctx.cloneWithEnv({
               // Pass client `buildDir` relative to server `buildDir.
               APP_PUBLIC_DIR: "public",
             }),
@@ -53,12 +53,12 @@ export class AppContext {
           }).build(),
         ),
 
-        new AppContext(
+        new App(
           "client",
           new ConfigBuilder({
+            ctx,
             mode,
             target: "web",
-            ctx: taskContext,
             paths: {
               srcDir: "src",
               publicPath: "/",

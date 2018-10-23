@@ -1,6 +1,10 @@
 import { exec } from "child_process";
+import * as fs from "fs";
+import * as path from "path";
 
 import stripAnsi from "strip-ansi";
+
+import { CliConfig } from "./CliConfig";
 
 export interface YarnWorkspace {
   name: string;
@@ -44,4 +48,44 @@ export function onExitSignal(fn: () => void | Promise<void>): void {
       process.exit();
     });
   });
+}
+
+export function reactCliConfigFile(
+  cwd: string,
+  configFile = "pack-o-tron.config.js",
+) {
+  const configPath = path.join(cwd, configFile);
+
+  if (!fs.existsSync(configPath)) {
+    throw new Error(`Config file "${configPath}" not found.`);
+  }
+
+  return require(configPath);
+}
+
+export function parseCliConfig(config: Partial<CliConfig>): CliConfig {
+  const { createApps, ...unknownProps } = config;
+
+  if (!createApps || typeof createApps !== "function") {
+    throw new Error(`Invalid  "config.createApps".`);
+  }
+
+  const unknownPropsKeys = Object.keys(unknownProps);
+
+  if (unknownPropsKeys.length > 0) {
+    throw new Error(
+      `There are ${
+        unknownPropsKeys.length
+      } props in config: ${unknownPropsKeys.map(x => `"${x}"`).join(", ")}.`,
+    );
+  }
+
+  return { createApps };
+}
+
+export function parseCliConfigFile(
+  cwd: string,
+  configFile?: string,
+): CliConfig {
+  return parseCliConfig(reactCliConfigFile(cwd, configFile));
 }

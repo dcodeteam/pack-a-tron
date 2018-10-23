@@ -4,9 +4,12 @@ import { version } from "../../package.json";
 import { BuildTask } from "../tasks/BuildTask";
 import { StartTask } from "../tasks/StartTask";
 import { TaskContext } from "../tasks/TaskContext";
-import { parseCliConfig } from "./CliConfig";
 import { CliLogger } from "./CliLogger";
-import { getYarnWorkspaces, onExitSignal } from "./CliUtils";
+import {
+  getYarnWorkspaces,
+  onExitSignal,
+  parseCliConfigFile,
+} from "./CliUtils";
 
 export type CliCommand = "init" | "start" | "build";
 
@@ -32,10 +35,11 @@ export class Cli {
       .command("start")
       .description("run development environment")
       .action(async () => {
-        const { preset } = await parseCliConfig(cwd);
         const workspaces = await getYarnWorkspaces(cwd);
+        const { createApps } = await parseCliConfigFile(cwd);
+
         const ctx = new TaskContext(cwd, env, workspaces);
-        const task = new StartTask(ctx, preset);
+        const task = new StartTask(ctx, createApps(ctx, "development"));
 
         onExitSignal(() => task.stop());
 
@@ -46,10 +50,10 @@ export class Cli {
       .command("build")
       .description("build project")
       .action(async () => {
-        const { preset } = await parseCliConfig(cwd);
         const workspaces = await getYarnWorkspaces(cwd);
+        const { createApps } = await parseCliConfigFile(cwd);
         const ctx = new TaskContext(cwd, env, workspaces);
-        const task = new BuildTask(ctx, preset);
+        const task = new BuildTask(createApps(ctx, "production"));
 
         onExitSignal(() => task.stop());
 

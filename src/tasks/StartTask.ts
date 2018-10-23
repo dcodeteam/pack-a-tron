@@ -3,12 +3,12 @@ import * as path from "path";
 import webpack, { Compiler } from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 
-import { AppContext, AppContextPreset } from "../app/AppContext";
-import { CliLogger } from "../cli/CliLogger";
+import { App } from "../app/App";
 import {
   assertWebpack,
   assertWebpackDevServer,
-} from "../config/utils/ConfigUtils";
+} from "../builders/utils/ConfigUtils";
+import { CliLogger } from "../cli/CliLogger";
 import { BaseTask } from "./BaseTask";
 import { TaskContext } from "./TaskContext";
 
@@ -17,7 +17,7 @@ const nodemon = require("nodemon");
 export class StartTask extends BaseTask {
   private readonly ctx: TaskContext;
 
-  private readonly apps: AppContext[];
+  private readonly apps: App[];
 
   private readonly servers: NodeJS.EventEmitter[];
 
@@ -25,17 +25,17 @@ export class StartTask extends BaseTask {
 
   private readonly devServers: WebpackDevServer[];
 
-  public constructor(ctx: TaskContext, preset: AppContextPreset) {
+  public constructor(ctx: TaskContext, apps: App[]) {
     super();
 
     this.ctx = ctx;
+    this.apps = apps;
     this.servers = [];
     this.watchers = [];
     this.devServers = [];
-    this.apps = AppContext.fromPreset("development", preset, this.ctx);
   }
 
-  private runClientBuild({ app, config }: AppContext): Promise<void> {
+  private runClientBuild({ app, config }: App): Promise<void> {
     assertWebpack();
     assertWebpackDevServer();
 
@@ -94,7 +94,7 @@ export class StartTask extends BaseTask {
     });
   }
 
-  private runServerBuild({ app, config }: AppContext): Promise<void> {
+  private runServerBuild({ app, config }: App): Promise<void> {
     assertWebpack();
 
     const logger = new CliLogger(`${app} builder`, "bgCyan");
@@ -143,7 +143,7 @@ export class StartTask extends BaseTask {
     });
   }
 
-  private runServer({ app, config }: AppContext): Promise<void> {
+  private runServer({ app, config }: App): Promise<void> {
     const logger = new CliLogger(`${app} runner`, "bgGreen");
     let launched = false;
 
