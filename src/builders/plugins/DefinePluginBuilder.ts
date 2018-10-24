@@ -32,15 +32,23 @@ export class DefinePluginBuilder extends PluginBuilder {
     this.envDefinitions = {};
     this.globalDefinitions = {};
 
-    const { appProtocol, appHost, appPort, appDevPort, env } = options.ctx;
+    const {
+      mode,
+      target,
+      ctx: { env, appProtocol, appHost, appPort, appDevPort },
+    } = options;
 
     this.addEnvDefinitions({
       ...env,
+
+      APP_MODE: mode,
+      APP_TARGET: target,
 
       APP_PROTOCOL: appProtocol,
       APP_HOST: appHost,
       APP_PORT: appPort,
       APP_DEV_PORT: appDevPort,
+
       APP_ASSET_MANIFEST_FILE_NAME:
         ManifestPluginBuilder.ASSET_MANIFEST_FILE_NAME,
     });
