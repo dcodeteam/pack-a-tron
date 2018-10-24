@@ -86,7 +86,14 @@ function createConfig({ input, outputFile }) {
   };
 }
 
-module.exports = createConfig({
-  input: "./src/index.ts",
-  outputFile: "./index.js",
-});
+module.exports = [
+  createConfig({
+    input: "./src/index.ts",
+    outputFile: "./index.js",
+  }),
+
+  createConfig({
+    input: "./src/babel-preset.ts",
+    outputFile: "./babel.js",
+  }),
+];

@@ -11,7 +11,8 @@
   },
   "files": [
     "cli.js",
-    "index.js"
+    "index.js",
+    "babel.js"
   ],
   "description": "Universal packaer",
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",

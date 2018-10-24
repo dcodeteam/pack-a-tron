@@ -18,6 +18,7 @@ import {
 } from "./abstract/AbstractConfigBuilder";
 import { ExternalsBuilder } from "./others/ExternalsBuilder";
 import { DefinePluginBuilder } from "./plugins/DefinePluginBuilder";
+import { HotModuleReplacementPluginBuilder } from "./plugins/HotModuleReplacementPluginBuilder";
 import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
 import { PluginBuilder } from "./plugins/PluginBuilder";
 import { JsonRuleBuilder } from "./rules/JsonRuleBuilder";
@@ -55,6 +56,11 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
     super("ConfigBuilder", options);
 
     this.entry = [`./${options.paths.entryFile}`];
+
+    if (this.isWeb && this.isDev) {
+      this.entry.unshift("react-dev-utils/webpackHotDevClient");
+    }
+
     this.output = {
       path: this.absoluteBuildDir,
 
@@ -290,6 +296,9 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
 
       // webpack-manifest-plugin
       new ManifestPluginBuilder(options),
+
+      // webpack.HotModuleReplacementPlugin
+      new HotModuleReplacementPluginBuilder(options),
     ];
 
     this.baseConfig = {

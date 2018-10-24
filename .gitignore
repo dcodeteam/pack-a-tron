@@ -1,8 +1,10 @@
 # Distributive
 /index.js
+/babel.js
 
 # Logs
-logs
+/*.logs
 
-# Dependencies
-node_modules/
+# NPM
+/*.tgz
+/node_modules/

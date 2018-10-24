@@ -45,7 +45,7 @@ export function onExitSignal(fn: () => void | Promise<void>): void {
     process.on(signal, async () => {
       await fn();
 
-      process.exit();
+      process.exit(0);
     });
   });
 }
