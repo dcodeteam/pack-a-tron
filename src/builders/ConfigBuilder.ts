@@ -1,5 +1,3 @@
-import * as path from "path";
-
 import {
   Configuration,
   Node,
@@ -78,17 +76,6 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
 
       libraryTarget: this.isNode ? "commonjs2" : "var",
       publicPath: options.paths.publicPath,
-
-      devtoolModuleFilenameTemplate: this.isNode
-        ? undefined
-        : // Point sourcemap entries to original disk location (format as URL on Windows)
-          info => {
-            const relativePath = this.isDev
-              ? path.resolve(info.absoluteResourcePath)
-              : path.relative(this.absoluteSrcDir, info.absoluteResourcePath);
-
-            return relativePath.replace(/\\/g, "/");
-          },
     };
 
     this.devServer =
