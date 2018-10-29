@@ -34,6 +34,8 @@ export class JSRuleBuilder extends RuleBuilder {
 
     const { cwd } = ctx;
 
+    const configFile = tryResolve(path.join(cwd, "babel.config.js"));
+
     return {
       loader,
       options: {
@@ -47,7 +49,7 @@ export class JSRuleBuilder extends RuleBuilder {
         babelrc: false,
 
         // Allow to modify babel settings via `babel.config.js` file.
-        configFile: tryResolve(path.join(cwd, "babel.config.js")) || false,
+        configFile: configFile || false,
 
         // This is a feature of `babel-loader` for webpack (not Babel itself).
         // It enables caching results in ./node_modules/.cache/babel-loader/
@@ -56,7 +58,9 @@ export class JSRuleBuilder extends RuleBuilder {
         // Don't waste time on Gzipping the cache
         cacheCompression: false,
 
-        presets: [[require.resolve("./babel"), { mode, target }]],
+        presets: configFile
+          ? []
+          : [[require.resolve("./babel"), { mode, target }]],
       },
     };
   }
