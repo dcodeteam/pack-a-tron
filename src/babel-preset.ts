@@ -155,8 +155,6 @@ export default function declare(api: BabelApi, options: unknown): BabelConfig {
         { useBuiltIns: true }, // Use `Object.assign`.
       ],
 
-      ["@babel/plugin-proposal-export-default-from", {}],
-
       [
         "@babel/plugin-proposal-class-properties",
         { loose: true }, // Do not use `Object.defineProperty`.
