@@ -19,6 +19,7 @@ import { DefinePluginBuilder } from "./plugins/DefinePluginBuilder";
 import { HotModuleReplacementPluginBuilder } from "./plugins/HotModuleReplacementPluginBuilder";
 import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
 import { PluginBuilder } from "./plugins/PluginBuilder";
+import { TerserPluginBuilder } from "./plugins/TerserPluginBuilder";
 import { JsonRuleBuilder } from "./rules/JsonRuleBuilder";
 import { JSRuleBuilder } from "./rules/JSRuleBuilder";
 import { RuleBuilder } from "./rules/RuleBuilder";
@@ -35,6 +36,8 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
   private resolve: Resolve;
 
   private optimization: Options.Optimization;
+
+  private minimizers: PluginBuilder[];
 
   private plugins: PluginBuilder[];
 
@@ -260,6 +263,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
 
       // Minimize only web output.
       minimize: this.isWeb && this.isProd,
+      minimizer: [],
 
       // Keep the runtime chunk seperated to enable long term caching
       // https://twitter.com/wSokra/status/969679223278505985
@@ -273,6 +277,8 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       //   name: false,
       // },
     };
+
+    this.minimizers = [new TerserPluginBuilder(options)];
 
     /**
      * @see https://webpack.js.org/configuration/plugins/
@@ -416,7 +422,12 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
         ],
       },
       resolve: this.resolve,
-      optimization: this.optimization,
+      optimization: {
+        ...this.optimization,
+        minimizer: this.minimizers
+          .map(x => x.build())
+          .filter((x): x is Plugin => x != null),
+      },
       plugins: this.plugins
         .map(x => x.build())
         .filter((x): x is Plugin => x != null),
