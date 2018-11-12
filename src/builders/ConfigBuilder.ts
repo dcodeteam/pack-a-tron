@@ -69,14 +69,14 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       filename: this.isNode
         ? "index.js"
         : this.isDev
-          ? "static/js/bundle.js"
-          : "static/js/bundle.[chunkhash:8].js",
+        ? "static/js/bundle.js"
+        : "static/js/bundle.[chunkhash:8].js",
 
       chunkFilename: this.isNode
         ? "[name]-chunk.js"
         : this.isDev
-          ? "static/js/[name].chunk.js"
-          : "static/js/[name].[chunkhash:8].chunk.js",
+        ? "static/js/[name].chunk.js"
+        : "static/js/[name].[chunkhash:8].chunk.js",
 
       libraryTarget: this.isNode ? "commonjs2" : "var",
       publicPath: options.paths.publicPath,
