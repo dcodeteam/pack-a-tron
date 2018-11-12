@@ -20,6 +20,7 @@ import { HotModuleReplacementPluginBuilder } from "./plugins/HotModuleReplacemen
 import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
 import { PluginBuilder } from "./plugins/PluginBuilder";
 import { TerserPluginBuilder } from "./plugins/TerserPluginBuilder";
+import { FileRuleBuilder } from "./rules/FileRuleBuilder";
 import { JsonRuleBuilder } from "./rules/JsonRuleBuilder";
 import { JSRuleBuilder } from "./rules/JSRuleBuilder";
 import { RuleBuilder } from "./rules/RuleBuilder";
@@ -242,6 +243,9 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       new StyleRuleBuilder(options)
         .setModules(true)
         .setPreProcessor("sass-loader"),
+
+      // file-loader
+      new FileRuleBuilder(options),
     ];
 
     this.resolve = {
