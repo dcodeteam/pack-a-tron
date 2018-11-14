@@ -18,6 +18,7 @@ export class FileRuleBuilder extends RuleBuilder {
       this.use.push({
         loader,
         options: {
+          publicPath: options.paths.publicPath,
           name: "static/media/[name].[hash:8].[ext]",
           outputPath: this.isNode ? "public" : undefined,
         },
