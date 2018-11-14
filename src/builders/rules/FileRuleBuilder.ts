@@ -17,7 +17,10 @@ export class FileRuleBuilder extends RuleBuilder {
     if (loader) {
       this.use.push({
         loader,
-        options: "static/media/[name].[hash:8].[ext]",
+        options: {
+          name: "static/media/[name].[hash:8].[ext]",
+          outputPath: this.isNode ? "public" : undefined,
+        },
       });
     }
   }
