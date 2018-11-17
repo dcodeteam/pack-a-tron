@@ -1,7 +1,10 @@
 import { YarnWorkspace } from "../cli/CliUtils";
 
 export interface TaskContextEnv {
-  readonly [key: string]: undefined | string;
+  readonly APP_PROTOCOL?: string;
+  readonly APP_HOST?: string;
+  readonly APP_PORT?: string;
+  readonly APP_DEV_PORT?: string;
 }
 
 export class TaskContext {
@@ -43,9 +46,5 @@ export class TaskContext {
 
   public get appFullDevHost(): string {
     return `${this.appProtocol}://${this.appHost}:${this.appDevPort}`;
-  }
-
-  public cloneWithEnv(env: TaskContextEnv) {
-    return new TaskContext(this.cwd, env, this.workspaces);
   }
 }

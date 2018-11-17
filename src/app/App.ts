@@ -3,6 +3,7 @@ import { Configuration } from "webpack";
 import { BuilderMode } from "../builders/abstract/AbstractConfigBuilder";
 import { ConfigBuilder } from "../builders/ConfigBuilder";
 import { TaskContext } from "../tasks/TaskContext";
+import { PUBLIC_DIR_NAME } from "./Contstants";
 
 export type AppContextPreset = "server" | "ssr" | "client";
 
@@ -38,12 +39,9 @@ export class App {
         new App(
           "server",
           new ConfigBuilder({
+            ctx,
             mode,
             target: "node",
-            ctx: ctx.cloneWithEnv({
-              // Pass client `buildDir` relative to server `buildDir.
-              APP_PUBLIC_DIR: "public",
-            }),
             paths: {
               srcDir: "src",
               publicPath: "/",
@@ -62,7 +60,7 @@ export class App {
             paths: {
               srcDir: "src",
               publicPath: "/",
-              buildDir: "build/public",
+              buildDir: `build/${PUBLIC_DIR_NAME}`,
               entryFile: "src/client-entry",
             },
           }).build(),

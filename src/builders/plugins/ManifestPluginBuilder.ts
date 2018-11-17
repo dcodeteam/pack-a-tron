@@ -3,10 +3,9 @@ import { Plugin } from "webpack";
 import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
 import { PluginBuilder } from "./PluginBuilder";
+import { ASSET_MANIFEST_FILE_NAME } from "../../app/Contstants";
 
 export class ManifestPluginBuilder extends PluginBuilder {
-  public static readonly ASSET_MANIFEST_FILE_NAME = "asset-manifest.json";
-
   public constructor(options: BuilderOptions) {
     super("ManifestPluginBuilder", options);
   }
@@ -29,7 +28,7 @@ export class ManifestPluginBuilder extends PluginBuilder {
       // Write to disk, so server app will what files to use.
       writeToFileEmit: true,
 
-      fileName: ManifestPluginBuilder.ASSET_MANIFEST_FILE_NAME,
+      fileName: ASSET_MANIFEST_FILE_NAME,
     });
   }
 }
