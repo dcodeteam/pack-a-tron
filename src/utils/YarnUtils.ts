@@ -1,5 +1,5 @@
-import { YarnWorkspace } from "../cli/CliUtils";
 import { tryExecAsync } from "./ShellUtils";
+import { YarnWorkspace } from "../task-config/TaskConfig";
 
 export function getYarnWorkspaces(cwd: string): Promise<YarnWorkspace[]> {
   return tryExecAsync("yarn workspaces info --silent", { cwd })

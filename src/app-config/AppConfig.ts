@@ -8,7 +8,10 @@ import { TaskConfig } from "../task-config/TaskConfig";
 export type AppContextPreset = "server" | "ssr" | "client";
 
 export class AppConfig {
-  public static fromConfiguration(mode: BuilderMode, config: TaskConfig) {
+  public static fromConfiguration(
+    mode: BuilderMode,
+    config: TaskConfig,
+  ): AppConfig[] {
     const { srcDir, clientConfig, serverConfig } = config;
 
     if (clientConfig && serverConfig) {
@@ -38,7 +41,7 @@ export class AppConfig {
               srcDir,
               publicPath: "/",
               buildDir: `build/${PUBLIC_DIR_NAME}`,
-              entryFile: serverConfig.entryFile,
+              entryFile: clientConfig.entryFile,
             },
           }).build(),
         ),
@@ -64,7 +67,11 @@ export class AppConfig {
       ];
     }
 
-    throw new Error("Please use create-react-app.");
+    if (clientConfig) {
+      throw new Error("Please use create-react-app.");
+    }
+
+    throw new Error("No config found.");
   }
 
   public constructor(

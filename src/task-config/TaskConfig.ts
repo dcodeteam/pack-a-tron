@@ -71,8 +71,8 @@ export class TaskConfig {
   }
 
   public get clientProtocol(): "http" | "https" {
-    const config = this.clientConfig;
-    const protocol = config && config.dev && config.dev.protocol;
+    const client = this.clientConfig;
+    const protocol = client && client.dev && client.dev.protocol;
 
     if (protocol !== "http" && protocol !== "https") {
       throw new Error(
@@ -84,8 +84,8 @@ export class TaskConfig {
   }
 
   public get clientHost(): string {
-    const config = this.clientConfig;
-    const host = config && config.dev && config.dev.host;
+    const client = this.clientConfig;
+    const host = client && client.dev && client.dev.host;
 
     if (!host) {
       throw new Error(`Invalid "client.dev.host" with value "${host}".`);
@@ -95,8 +95,8 @@ export class TaskConfig {
   }
 
   public get clientServerPort(): number {
-    const config = this.clientConfig;
-    const serverPort = Number(config && config.dev && config.dev.serverPort);
+    const client = this.clientConfig;
+    const serverPort = Number(client && client.dev && client.dev.serverPort);
 
     if (!serverPort) {
       throw new Error(
@@ -108,9 +108,9 @@ export class TaskConfig {
   }
 
   public get clientDevServerPort(): number {
-    const config = this.clientConfig;
+    const client = this.clientConfig;
     const devServerPort = Number(
-      config && config.dev && config.dev.devServerPort,
+      client && client.dev && client.dev.devServerPort,
     );
 
     if (!devServerPort) {

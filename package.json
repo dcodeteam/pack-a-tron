@@ -3,16 +3,17 @@
   "name": "pack-o-tron",
   "version": "0.0.13",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "main": "index.js",
   "bin": {
     "pt": "cli.js"
   },
   "files": [
+    "babel.js",
     "cli.js",
-    "index.js",
-    "babel.js"
+    "cli-build.js",
+    "cli-start.js"
   ],
   "description": "Universal packaer",
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",
@@ -29,6 +30,7 @@
   "dependencies": {
     "chalk": "^2.4.1",
     "commander": "^2.19.0",
+    "jsonschema": "^1.2.4",
     "loader-utils": "^1.1.0",
     "nodemon": "^1.18.4",
     "strip-ansi": "^5.0.0"
@@ -40,7 +42,6 @@
   "devDependencies": {
     "@babel/core": "^7.1.6",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.1.0",
     "@babel/preset-env": "^7.1.6",
     "@babel/preset-typescript": "^7.1.0",
     "@dc0de/eslint-config": "^0.4.5",

@@ -1,12 +1,16 @@
 import { isAbsolute, join } from "path";
-import { TaskConfig, TaskConfigOptions, YarnWorkspace } from "./TaskConfig";
+import { TaskConfig, TaskConfigOptions } from "./TaskConfig";
 import { getYarnWorkspaces } from "../utils/YarnUtils";
+import { Validator } from "jsonschema";
 
 function resolveFilePath(cwd: string, filePath: string): string {
   return isAbsolute(filePath) ? filePath : join(cwd, filePath);
 }
 
-function readPlainConfig(cwd: string, configFile: string): Partial<TaskConfig> {
+function readPlainConfig(
+  cwd: string,
+  configFile: string,
+): Partial<TaskConfigOptions> {
   const configPath = resolveFilePath(cwd, configFile);
 
   try {
@@ -16,35 +20,46 @@ function readPlainConfig(cwd: string, configFile: string): Partial<TaskConfig> {
   }
 }
 
-export function parseYarnWorkspace(
-  index: number,
-  { name, location, ...unknownProps }: Partial<YarnWorkspace>,
-): YarnWorkspace {
-  if (!name) {
-    throw new Error(`Invalid "workspaces[${index}].name".`);
-  }
-
-  if (!location) {
-    throw new Error(`Invalid "workspaces[${index}].location".`);
-  }
-
-  const unknownPropsKeys = Object.keys(unknownProps);
-
-  if (unknownPropsKeys.length > 0) {
-    throw new Error(
-      `There are ${
-        unknownPropsKeys.length
-      } props in config: ${unknownPropsKeys.map(x => `"${x}"`).join(", ")}.`,
-    );
-  }
-
-  return { name, location };
-}
-
 export async function parseTaskConfig(
   cwd: string,
   options: TaskConfigOptions,
-): Promise<TaskConfigOptions> {
+): Promise<TaskConfig> {
+  const validator = new Validator();
+  const result = validator.validate(
+    options,
+    {
+      $schema: "config",
+      type: "object",
+      required: ["srcDir"],
+      properties: {
+        srcDir: { type: "string" },
+
+        client: {
+          type: "object",
+          required: ["entryFile"],
+          properties: {
+            entryFile: { type: "string" },
+          },
+        },
+
+        server: {
+          type: "object",
+          required: ["entryFile"],
+          properties: {
+            entryFile: { type: "string" },
+          },
+        },
+      },
+    },
+    { propertyName: "config" },
+  );
+
+  if (result.errors.length > 0) {
+    throw new Error(
+      result.errors.map(x => `${x.property} ${x.message}`).join("\n"),
+    );
+  }
+
   const workspaces = options.workspaces || (await getYarnWorkspaces(cwd));
 
   return new TaskConfig(cwd, { ...options, workspaces });
@@ -56,5 +71,5 @@ export async function parseTaskConfigFile(
 ): Promise<TaskConfig> {
   const plain = readPlainConfig(cwd, configFile);
 
-  return new TaskConfig(cwd, plain);
+  return parseTaskConfig(cwd, plain);
 }

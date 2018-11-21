@@ -1,6 +1,5 @@
 "use strict";
 
-const babel = require("@babel/core");
 const jsonPlugin = require("rollup-plugin-json");
 const babelPlugin = require("rollup-plugin-babel");
 const prettierPlugin = require("rollup-plugin-prettier");
@@ -16,15 +15,24 @@ const externals = [
   ...Object.keys(pkg.peerDependencies),
 ];
 
-function createConfig({ input, outputFile }) {
+module.exports = [
+  createConfig({
+    shebang: true,
+    input: "./src/cli.ts",
+    outputFile: "./cli.js",
+  }),
+  createConfig({ input: "./src/cli-build.ts", outputFile: "./cli-build.js" }),
+  createConfig({ input: "./src/cli-start.ts", outputFile: "./cli-start.js" }),
+  createConfig({ input: "./src/babel-preset.ts", outputFile: "./babel.js" }),
+];
+
+function createConfig({ shebang, input, outputFile }) {
   return {
     input,
 
-    output: { format: "es", file: outputFile },
+    output: { file: outputFile, format: "cjs" },
 
-    external(id) {
-      return externals.includes(id);
-    },
+    external: id => externals.includes(id),
 
     plugins: [
       jsonPlugin(),
@@ -41,59 +49,22 @@ function createConfig({ input, outputFile }) {
             {
               loose: true,
               modules: false,
-              targets: { node: "8.0.0" },
+              targets: { node: "10.0.0" },
             },
           ],
           "@babel/preset-typescript",
         ],
-        plugins: [
-          [
-            "@babel/plugin-proposal-object-rest-spread",
-            {
-              useBuiltIns: true,
-            },
-          ],
-          [
-            "@babel/plugin-proposal-class-properties",
-            {
-              loose: true,
-            },
-          ],
-        ],
+
+        plugins: [["@babel/plugin-proposal-class-properties", { loose: true }]],
       }),
 
       {
-        name: "lazyRequirePlugin",
-        renderChunk(code) {
-          return babel.transformSync(code, {
-            plugins: [
-              [
-                "@babel/plugin-transform-modules-commonjs",
-                {
-                  // Do not lazy require node builtins.
-                  lazy(id) {
-                    return !usedNodeBuiltins.includes(id);
-                  },
-                },
-              ],
-            ],
-          });
-        },
+        name: "shebangPlugin",
+        renderChunk: code =>
+          !shebang ? code : `#!/usr/bin/env node\n\n${code}`,
       },
 
       prettierPlugin({ parser: "babylon" }),
     ],
   };
 }
-
-module.exports = [
-  createConfig({
-    input: "./src/index.ts",
-    outputFile: "./index.js",
-  }),
-
-  createConfig({
-    input: "./src/babel-preset.ts",
-    outputFile: "./babel.js",
-  }),
-];

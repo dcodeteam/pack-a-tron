@@ -12,8 +12,6 @@ import { CliLogger } from "../cli/CliLogger";
 import { BaseTask } from "./BaseTask";
 import { TaskConfig } from "../task-config/TaskConfig";
 
-const nodemon = require("nodemon");
-
 export class StartTask extends BaseTask {
   private readonly apps = AppConfig.fromConfiguration(
     "development",
@@ -147,6 +145,7 @@ export class StartTask extends BaseTask {
 
       const script = path.join(config.output!.path!, config.output!.filename!);
 
+      const nodemon = require("nodemon");
       const server = nodemon({
         script,
         stdout: false,
