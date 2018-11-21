@@ -44,6 +44,6 @@ deploy:
     api_key: $NPM_TOKEN
     on:
       tags: true
-      node_js: "8"
+      node_js: "10"
       branch: master
       repo: dcodeteam/pack-o-tron
