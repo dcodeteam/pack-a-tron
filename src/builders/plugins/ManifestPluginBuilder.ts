@@ -3,7 +3,7 @@ import { Plugin } from "webpack";
 import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
 import { tryResolve } from "../utils/ConfigUtils";
 import { PluginBuilder } from "./PluginBuilder";
-import { ASSET_MANIFEST_FILE_NAME } from "../../app/Contstants";
+import { ASSET_MANIFEST_FILE_NAME } from "../../app-config/TaskContants";
 
 export class ManifestPluginBuilder extends PluginBuilder {
   public constructor(options: BuilderOptions) {

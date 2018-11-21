@@ -57,7 +57,9 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
   public constructor(options: BuilderOptions) {
     super("ConfigBuilder", options);
 
-    this.entry = [`./${options.paths.entryFile}`];
+    const { paths, config } = options;
+
+    this.entry = [`./${paths.entryFile}`];
 
     if (this.isWeb && this.isDev) {
       this.entry.unshift("react-dev-utils/webpackHotDevClient");
@@ -79,7 +81,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
         : "static/js/[name].[chunkhash:8].chunk.js",
 
       libraryTarget: this.isNode ? "commonjs2" : "var",
-      publicPath: options.paths.publicPath,
+      publicPath: paths.publicPath,
     };
 
     this.devServer =
@@ -155,7 +157,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
             },
 
             // Enable HTTPS if the HTTPS environment variable is set to 'true'
-            https: options.ctx.appProtocol === "https",
+            https: config.clientProtocol === "https",
 
             overlay: false,
             historyApiFallback: {
@@ -167,7 +169,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
             // public: allowedHost, // TODO: Enable.
 
             // Use reverse proxy.
-            proxy: { "**": { target: options.ctx.appFullDevHost } },
+            proxy: { "**": { target: config.clientDevServerUrl } },
 
             // before(app, server) { // TODO: Enable.
             // if (fs.existsSync(paths.proxySetup)) {
@@ -263,7 +265,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       noEmitOnErrors: true,
 
       // Tells webpack to set process.env.NODE_ENV to current build mode.
-      nodeEnv: this.options.mode,
+      nodeEnv: options.mode,
 
       // Minimize only web output.
       minimize: this.isWeb && this.isProd,
@@ -307,12 +309,12 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       /**
        * @see https://webpack.js.org/concepts/mode/
        */
-      mode: this.options.mode,
+      mode: options.mode,
 
       /**
        * @see https://webpack.js.org/configuration/entry-context/#context
        */
-      context: this.options.ctx.cwd,
+      context: config.cwd,
 
       /**
        * @see https://webpack.js.org/configuration/watch/
@@ -322,7 +324,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       /**
        * @see https://webpack.js.org/configuration/target/
        */
-      target: this.options.target,
+      target: options.target,
     };
   }
 

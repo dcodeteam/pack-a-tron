@@ -15,6 +15,8 @@ export class ExternalsBuilder extends AbstractConfigBuilder<
   }
 
   public build(): ExternalsFunctionElement {
+    const { workspaceNamesPattern } = this.config;
+
     return (_context, request, callback) => {
       if (
         // Include if it's Web runtime.
@@ -28,9 +30,7 @@ export class ExternalsBuilder extends AbstractConfigBuilder<
         // Include Babel runtime helpers.
         request.includes("@babel/runtime") ||
         // Include Yarn workspaces.
-        Boolean(
-          this.workspacesNameRegExp && this.workspacesNameRegExp.test(request),
-        )
+        Boolean(workspaceNamesPattern && workspaceNamesPattern.test(request))
       ) {
         callback(undefined, undefined);
       } else {

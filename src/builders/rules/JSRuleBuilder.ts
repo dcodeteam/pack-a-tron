@@ -22,9 +22,9 @@ export interface BabelLoader extends RuleSetLoader {
 
 export class JSRuleBuilder extends RuleBuilder {
   public static createBabelLoader({
-    ctx,
     mode,
     target,
+    config,
   }: BuilderOptions): null | RuleSetLoader {
     const loader = tryResolve("babel-loader");
 
@@ -32,7 +32,7 @@ export class JSRuleBuilder extends RuleBuilder {
       return null;
     }
 
-    const { cwd } = ctx;
+    const { cwd } = config;
 
     return {
       loader,

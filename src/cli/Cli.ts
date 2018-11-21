@@ -3,13 +3,11 @@ import { CommanderStatic } from "commander";
 import { version } from "../../package.json";
 import { BuildTask } from "../tasks/BuildTask";
 import { StartTask } from "../tasks/StartTask";
-import { TaskContext } from "../tasks/TaskContext";
 import { CliLogger } from "./CliLogger";
-import {
-  getYarnWorkspaces,
-  onExitSignal,
-  parseCliConfigFile,
-} from "./CliUtils";
+import { TaskConfig } from "../task-config/TaskConfig";
+import { BaseTask } from "../tasks/BaseTask";
+import { parseTaskConfigFile } from "../task-config/TaskConfigUtils";
+import { onExitSignal } from "./CliUtils";
 
 export type CliCommand = "init" | "start" | "build";
 
@@ -17,8 +15,18 @@ export interface CliEnv {
   readonly [key: string]: string;
 }
 
+async function runTask(
+  cwd: string,
+  factory: (config: TaskConfig) => BaseTask,
+): Promise<void> {
+  const config = await parseTaskConfigFile(cwd);
+  const task = await factory(config);
+
+  onExitSignal(() => task.stop());
+}
+
 export class Cli {
-  public static async run(cwd: string, env: CliEnv, argv: string[]) {
+  public static async run(cwd: string, argv: string[]) {
     const commander: CommanderStatic = require("commander");
     const logger = new CliLogger("CLI", "bgCyan");
 
@@ -34,31 +42,12 @@ export class Cli {
     commander
       .command("start")
       .description("run development environment")
-      .action(async () => {
-        const workspaces = await getYarnWorkspaces(cwd);
-        const { createApps } = await parseCliConfigFile(cwd);
-
-        const ctx = new TaskContext(cwd, env, workspaces);
-        const task = new StartTask(ctx, createApps(ctx, "development"));
-
-        onExitSignal(() => task.stop());
-
-        await task.run();
-      });
+      .action(() => runTask(cwd, config => new StartTask(config)));
 
     commander
       .command("build")
       .description("build project")
-      .action(async () => {
-        const workspaces = await getYarnWorkspaces(cwd);
-        const { createApps } = await parseCliConfigFile(cwd);
-        const ctx = new TaskContext(cwd, env, workspaces);
-        const task = new BuildTask(createApps(ctx, "production"));
-
-        onExitSignal(() => task.stop());
-
-        await task.run();
-      });
+      .action(() => runTask(cwd, config => new BuildTask(config)));
 
     commander.parse(argv);
 
