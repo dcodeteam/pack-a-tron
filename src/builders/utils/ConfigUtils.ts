@@ -19,7 +19,11 @@ export function tryResolve(id: string): null | string {
   try {
     return require.resolve(id);
   } catch (e) {
-    return null;
+    if (e && e.code === "MODULE_NOT_FOUND") {
+      return null;
+    }
+
+    throw e;
   }
 }
 

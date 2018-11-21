@@ -1,19 +1,21 @@
 import webpack from "webpack";
 
-import { App } from "../app/App";
+import { AppConfig } from "../app-config/AppConfig";
 import { CliLogger } from "../cli/CliLogger";
 import { BaseTask } from "./BaseTask";
+import { TaskConfig } from "../task-config/TaskConfig";
 
 export class BuildTask extends BaseTask {
-  private readonly apps: App[];
+  private readonly apps = AppConfig.fromConfiguration(
+    "production",
+    this.config,
+  );
 
-  public constructor(apps: App[]) {
+  public constructor(private readonly config: TaskConfig) {
     super();
-
-    this.apps = apps;
   }
 
-  private runBuild({ app, config }: App): Promise<void> {
+  private runBuild({ app, config }: AppConfig): Promise<void> {
     const logger = new CliLogger(`${app} builder`, "bgCyan");
 
     return new Promise((resolve, reject) => {

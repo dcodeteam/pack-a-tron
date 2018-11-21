@@ -1,6 +1,9 @@
 # Distributive
-/index.js
+
 /babel.js
+/cli.js
+/cli-start.js
+/cli-build.js
 
 # Logs
 /*.logs

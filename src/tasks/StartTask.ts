@@ -3,45 +3,38 @@ import * as path from "path";
 import webpack, { Compiler } from "webpack";
 import WebpackDevServer from "webpack-dev-server";
 
-import { App } from "../app/App";
+import { AppConfig } from "../app-config/AppConfig";
 import {
   assertWebpack,
   assertWebpackDevServer,
 } from "../builders/utils/ConfigUtils";
 import { CliLogger } from "../cli/CliLogger";
 import { BaseTask } from "./BaseTask";
-import { TaskContext } from "./TaskContext";
-
-const nodemon = require("nodemon");
+import { TaskConfig } from "../task-config/TaskConfig";
 
 export class StartTask extends BaseTask {
-  private readonly ctx: TaskContext;
+  private readonly apps = AppConfig.fromConfiguration(
+    "development",
+    this.config,
+  );
 
-  private readonly apps: App[];
+  private readonly servers: NodeJS.EventEmitter[] = [];
 
-  private readonly servers: NodeJS.EventEmitter[];
+  private readonly watchers: Compiler.Watching[] = [];
 
-  private readonly watchers: Compiler.Watching[];
+  private readonly devServers: WebpackDevServer[] = [];
 
-  private readonly devServers: WebpackDevServer[];
-
-  public constructor(ctx: TaskContext, apps: App[]) {
+  public constructor(private readonly config: TaskConfig) {
     super();
-
-    this.ctx = ctx;
-    this.apps = apps;
-    this.servers = [];
-    this.watchers = [];
-    this.devServers = [];
   }
 
-  private runClientBuild({ app, config }: App): Promise<void> {
+  private runClientBuild({ app, config }: AppConfig): Promise<void> {
     assertWebpack();
     assertWebpackDevServer();
 
     const logger = new CliLogger(`${app} builder`, "bgBlue");
 
-    const { appPort, appHost, appFullHost } = this.ctx;
+    const { clientHost, clientDevServerPort, clientDevServerUrl } = this.config;
 
     return new Promise<void>((resolve, reject) => {
       logger.log("Launching process...");
@@ -80,13 +73,13 @@ export class StartTask extends BaseTask {
       this.devServers.push(devServer);
 
       // Start server on main application port.
-      devServer.listen(appPort, appHost, error => {
+      devServer.listen(clientDevServerPort, clientHost, error => {
         if (error) {
           logger.error(error);
 
           reject(error);
         } else {
-          logger.log("Development server started at %s", appFullHost);
+          logger.log("Development server started at %s", clientDevServerUrl);
 
           resolve();
         }
@@ -94,7 +87,7 @@ export class StartTask extends BaseTask {
     });
   }
 
-  private runServerBuild({ app, config }: App): Promise<void> {
+  private runServerBuild({ app, config }: AppConfig): Promise<void> {
     assertWebpack();
 
     const logger = new CliLogger(`${app} builder`, "bgCyan");
@@ -143,7 +136,7 @@ export class StartTask extends BaseTask {
     });
   }
 
-  private runServer({ app, config }: App): Promise<void> {
+  private runServer({ app, config }: AppConfig): Promise<void> {
     const logger = new CliLogger(`${app} runner`, "bgGreen");
     let launched = false;
 
@@ -152,6 +145,7 @@ export class StartTask extends BaseTask {
 
       const script = path.join(config.output!.path!, config.output!.filename!);
 
+      const nodemon = require("nodemon");
       const server = nodemon({
         script,
         stdout: false,

@@ -26,12 +26,15 @@ export class RuleBuilder extends AbstractConfigBuilder<null | RuleSetRule> {
   }
 
   public includeSrc(): this {
-    const { absoluteSrcDir, workspacesLocationRegExp } = this;
+    const {
+      absoluteSrcDir,
+      config: { workspaceLocationsPattern },
+    } = this;
 
     this.include = [absoluteSrcDir];
 
-    if (workspacesLocationRegExp) {
-      this.include.push(workspacesLocationRegExp);
+    if (workspaceLocationsPattern) {
+      this.include.push(workspaceLocationsPattern);
     }
 
     return this;

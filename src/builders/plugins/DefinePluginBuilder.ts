@@ -5,7 +5,7 @@ import { PluginBuilder } from "./PluginBuilder";
 import {
   ASSET_MANIFEST_FILE_NAME,
   PUBLIC_DIR_NAME,
-} from "../../app/Contstants";
+} from "../../app-config/TaskContants";
 
 interface Env {
   [key: string]: number | string;
@@ -25,34 +25,38 @@ export function toProcessEnv(env: Env): Env {
 }
 
 export class DefinePluginBuilder extends PluginBuilder {
-  private readonly envDefinitions: Env;
+  private readonly envDefinitions: Env = {};
 
-  private readonly globalDefinitions: Env;
+  private readonly globalDefinitions: Env = {};
 
   public constructor(options: BuilderOptions) {
     super("DefinePluginBuilder", options);
 
-    this.envDefinitions = {};
-    this.globalDefinitions = {};
-
-    const { mode, target } = options;
+    const { mode, target, config } = options;
 
     this.addEnvDefinitions({
-      APP_MODE: mode,
-      APP_TARGET: target,
-      APP_PUBLIC_DIR: PUBLIC_DIR_NAME,
-      APP_ASSET_MANIFEST_FILE_NAME: ASSET_MANIFEST_FILE_NAME,
+      APP_BUILD_MODE: mode,
+      APP_BUILD_TARGET: target,
+      APP_BUILD_PUBLIC_DIR: PUBLIC_DIR_NAME,
+      APP_BUILD_ASSET_MANIFEST_FILE_NAME: ASSET_MANIFEST_FILE_NAME,
     });
 
-    if (this.isDev) {
-      const { appProtocol, appHost, appPort, appDevPort } = options.ctx;
+    if (this.isWeb) {
+      const { clientConfig } = config;
+      const env = clientConfig && clientConfig.env;
 
-      this.addEnvDefinitions({
-        APP_PROTOCOL: appProtocol,
-        APP_HOST: appHost,
-        APP_PORT: appPort,
-        APP_DEV_PORT: appDevPort,
-      });
+      if (env) {
+        this.addEnvDefinitions(env as Env);
+      }
+    }
+
+    if (this.isNode) {
+      const { serverConfig } = config;
+      const env = serverConfig && serverConfig.env;
+
+      if (env) {
+        this.addEnvDefinitions(env as Env);
+      }
     }
   }
 
