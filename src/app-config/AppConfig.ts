@@ -26,7 +26,7 @@ export class AppConfig {
               srcDir,
               publicPath: "/",
               buildDir: "build",
-              entryFile: clientConfig.entryFile,
+              entryFile: serverConfig.entryFile,
             },
           }).build(),
         ),

@@ -169,7 +169,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
             // public: allowedHost, // TODO: Enable.
 
             // Use reverse proxy.
-            proxy: { "**": { target: config.clientDevServerUrl } },
+            proxy: { "**": { target: config.clientServerUrl } },
 
             // before(app, server) { // TODO: Enable.
             // if (fs.existsSync(paths.proxySetup)) {

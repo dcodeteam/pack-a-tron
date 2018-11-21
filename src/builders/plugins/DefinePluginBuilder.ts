@@ -32,7 +32,7 @@ export class DefinePluginBuilder extends PluginBuilder {
   public constructor(options: BuilderOptions) {
     super("DefinePluginBuilder", options);
 
-    const { mode, target } = options;
+    const { mode, target, config } = options;
 
     this.addEnvDefinitions({
       APP_BUILD_MODE: mode,
@@ -40,6 +40,24 @@ export class DefinePluginBuilder extends PluginBuilder {
       APP_BUILD_PUBLIC_DIR: PUBLIC_DIR_NAME,
       APP_BUILD_ASSET_MANIFEST_FILE_NAME: ASSET_MANIFEST_FILE_NAME,
     });
+
+    if (this.isWeb) {
+      const { clientConfig } = config;
+      const env = clientConfig && clientConfig.env;
+
+      if (env) {
+        this.addEnvDefinitions(env as Env);
+      }
+    }
+
+    if (this.isNode) {
+      const { serverConfig } = config;
+      const env = serverConfig && serverConfig.env;
+
+      if (env) {
+        this.addEnvDefinitions(env as Env);
+      }
+    }
   }
 
   public addRawDefinitions(rawDefinitions: {

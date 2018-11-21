@@ -2,6 +2,7 @@ import { isAbsolute, join } from "path";
 import { TaskConfig, TaskConfigOptions } from "./TaskConfig";
 import { getYarnWorkspaces } from "../utils/YarnUtils";
 import { Validator } from "jsonschema";
+import { tryResolve } from "../builders/utils/ConfigUtils";
 
 function resolveFilePath(cwd: string, filePath: string): string {
   return isAbsolute(filePath) ? filePath : join(cwd, filePath);
@@ -12,12 +13,13 @@ function readPlainConfig(
   configFile: string,
 ): Partial<TaskConfigOptions> {
   const configPath = resolveFilePath(cwd, configFile);
+  const idPath = tryResolve(configPath);
 
-  try {
-    return require(configPath);
-  } catch (e) {
+  if (!idPath) {
     throw new Error(`Config file "${configPath}" not found.`);
   }
+
+  return require(idPath);
 }
 
 export async function parseTaskConfig(
