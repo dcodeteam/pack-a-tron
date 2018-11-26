@@ -2,8 +2,8 @@ import * as webpack from "webpack";
 
 import { BuilderMode } from "../builders/abstract/AbstractConfigBuilder";
 import { ConfigBuilder } from "../builders/ConfigBuilder";
-import { PUBLIC_DIR_NAME } from "./TaskContants";
 import { TaskConfig } from "../task-config/TaskConfig";
+import { PUBLIC_DIR_NAME } from "./TaskContants";
 
 export type AppContextPreset = "server" | "ssr" | "client";
 

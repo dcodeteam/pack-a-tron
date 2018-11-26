@@ -1,12 +1,12 @@
 import { CommanderStatic } from "commander";
 
 import { version } from "../../package.json";
+import { TaskConfig } from "../task-config/TaskConfig";
+import { parseTaskConfigFile } from "../task-config/TaskConfigUtils";
+import { BaseTask } from "../tasks/BaseTask";
 import { BuildTask } from "../tasks/BuildTask";
 import { StartTask } from "../tasks/StartTask";
 import { CliLogger } from "./CliLogger";
-import { TaskConfig } from "../task-config/TaskConfig";
-import { BaseTask } from "../tasks/BaseTask";
-import { parseTaskConfigFile } from "../task-config/TaskConfigUtils";
 import { onExitSignal } from "./CliUtils";
 
 export type CliCommand = "init" | "start" | "build";

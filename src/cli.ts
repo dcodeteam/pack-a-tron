@@ -1,5 +1,6 @@
-import { version } from "../package.json";
 import { CommanderStatic } from "commander";
+
+import { version } from "../package.json";
 
 process.on("unhandledRejection", e => {
   throw e;

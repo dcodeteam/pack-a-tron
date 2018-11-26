@@ -2,8 +2,8 @@ import webpack from "webpack";
 
 import { AppConfig } from "../app-config/AppConfig";
 import { CliLogger } from "../cli/CliLogger";
-import { BaseTask } from "./BaseTask";
 import { TaskConfig } from "../task-config/TaskConfig";
+import { BaseTask } from "./BaseTask";
 
 export class BuildTask extends BaseTask {
   private readonly apps = AppConfig.fromConfiguration(
@@ -33,11 +33,7 @@ export class BuildTask extends BaseTask {
         if (stats.hasErrors()) {
           reject(
             new Error(
-              stats.toString({
-                all: false,
-                colors: true,
-                errors: true,
-              }),
+              stats.toString({ all: false, colors: true, errors: true }),
             ),
           );
 
@@ -47,11 +43,7 @@ export class BuildTask extends BaseTask {
         if (stats.hasWarnings()) {
           logger.alert(
             "Compiled with warnings.\n%s",
-            stats.toString({
-              all: false,
-              colors: true,
-              warnings: true,
-            }),
+            stats.toString({ all: false, colors: true, warnings: true }),
           );
         }
 

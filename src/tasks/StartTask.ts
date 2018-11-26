@@ -9,8 +9,8 @@ import {
   assertWebpackDevServer,
 } from "../builders/utils/ConfigUtils";
 import { CliLogger } from "../cli/CliLogger";
-import { BaseTask } from "./BaseTask";
 import { TaskConfig } from "../task-config/TaskConfig";
+import { BaseTask } from "./BaseTask";
 
 export class StartTask extends BaseTask {
   private readonly apps = AppConfig.fromConfiguration(

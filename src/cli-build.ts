@@ -1,5 +1,5 @@
-import { parseTaskConfigFile } from "./task-config/TaskConfigUtils";
 import { onExitSignal } from "./cli/CliUtils";
+import { parseTaskConfigFile } from "./task-config/TaskConfigUtils";
 import { BuildTask } from "./tasks/BuildTask";
 
 export default build();

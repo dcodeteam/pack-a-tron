@@ -5,6 +5,18 @@
     "global-require": "off",
     "no-restricted-syntax": "off",
     "import/no-dynamic-require": "off",
-    "typescript/no-var-requires": "off"
+    "typescript/no-type-alias": "off",
+    "typescript/no-var-requires": "off",
+    "no-shadow": [
+      "error",
+      {
+        "builtinGlobals": false,
+        "allow": [
+          // TODO: Re
+          "AppConfig",
+          "BuilderOptions"
+        ]
+      }
+    ]
   }
 }

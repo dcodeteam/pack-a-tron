@@ -1,8 +1,10 @@
 import { isAbsolute, join } from "path";
-import { TaskConfig, TaskConfigOptions } from "./TaskConfig";
-import { getYarnWorkspaces } from "../utils/YarnUtils";
+
 import { Validator } from "jsonschema";
+
 import { tryResolve } from "../builders/utils/ConfigUtils";
+import { getYarnWorkspaces } from "../utils/YarnUtils";
+import { TaskConfig, TaskConfigOptions } from "./TaskConfig";
 
 function resolveFilePath(cwd: string, filePath: string): string {
   return isAbsolute(filePath) ? filePath : join(cwd, filePath);

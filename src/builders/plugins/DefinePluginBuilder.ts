@@ -1,11 +1,11 @@
 import { DefinePlugin, Plugin } from "webpack";
 
-import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
-import { PluginBuilder } from "./PluginBuilder";
 import {
   ASSET_MANIFEST_FILE_NAME,
   PUBLIC_DIR_NAME,
 } from "../../app-config/TaskContants";
+import { BuilderOptions } from "../abstract/AbstractConfigBuilder";
+import { PluginBuilder } from "./PluginBuilder";
 
 interface Env {
   [key: string]: number | string;
