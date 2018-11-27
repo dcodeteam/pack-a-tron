@@ -32,7 +32,6 @@
     "commander": "^2.19.0",
     "jsonschema": "^1.2.4",
     "loader-utils": "^1.1.0",
-    "nodemon": "^1.18.4",
     "strip-ansi": "^5.0.0"
   },
   "peerDependencies": {

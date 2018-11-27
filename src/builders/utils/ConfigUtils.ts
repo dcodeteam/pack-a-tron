@@ -26,17 +26,3 @@ export function tryResolve(id: string): null | string {
     throw e;
   }
 }
-
-export function assertWebpack() {
-  if (!tryResolve("webpack")) {
-    throw new Error("Failed to run command: `webpack` is not installed.");
-  }
-}
-
-export function assertWebpackDevServer() {
-  if (!tryResolve("webpack-dev-server")) {
-    throw new Error(
-      "Failed to run command: `webpack-dev-server` is not installed.",
-    );
-  }
-}
