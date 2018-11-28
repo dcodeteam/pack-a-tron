@@ -1,4 +1,4 @@
-import { onExitSignal } from "./cli/CliUtils";
+import { onExitSignal, onTextEnter } from "./cli/CliUtils";
 import { parseTaskConfigFile } from "./task-config/TaskConfigUtils";
 import { StartTask } from "./tasks/StartTask";
 
@@ -8,7 +8,8 @@ async function start() {
   const config = await parseTaskConfigFile(process.cwd());
   const task = new StartTask(config);
 
-  await task.run();
-
+  onTextEnter(task.commands);
   onExitSignal(() => task.stop());
+
+  await task.run();
 }

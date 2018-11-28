@@ -12,7 +12,7 @@ export class BuildTask extends BaseTask {
   );
 
   public constructor(private readonly config: TaskConfig) {
-    super();
+    super([]);
   }
 
   private runBuild({ app, config }: AppConfig): Promise<void> {

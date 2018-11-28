@@ -7,13 +7,15 @@ const nodeResolvePlugin = require("rollup-plugin-node-resolve");
 
 const pkg = require("./package");
 
-const usedNodeBuiltins = ["fs", "path", "child_process"];
+const externals = new Set([
+  "fs",
+  "path",
+  "readline",
+  "child_process",
 
-const externals = [
-  ...usedNodeBuiltins,
   ...Object.keys(pkg.dependencies),
   ...Object.keys(pkg.peerDependencies),
-];
+]);
 
 module.exports = [
   createConfig({
@@ -32,7 +34,7 @@ function createConfig({ shebang, input, outputFile }) {
 
     output: { file: outputFile, format: "cjs" },
 
-    external: id => externals.includes(id),
+    external: id => externals.has(id),
 
     plugins: [
       jsonPlugin(),

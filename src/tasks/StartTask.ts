@@ -22,7 +22,12 @@ export class StartTask extends BaseTask {
   private readonly devServers = new Set<WebpackDevServer>();
 
   public constructor(private readonly config: TaskConfig) {
-    super();
+    super([
+      {
+        text: "rs",
+        fn: () => this.restart(),
+      },
+    ]);
   }
 
   private runClientBuild({ app, config }: AppConfig): Promise<void> {
@@ -180,6 +185,11 @@ export class StartTask extends BaseTask {
   public restart() {
     this.watchers.forEach(x => {
       x.invalidate();
+    });
+
+    this.devServers.forEach(x => {
+      // eslint-disable-next-line typescript/no-explicit-any
+      (x as any).middleware.invalidate();
     });
   }
 
