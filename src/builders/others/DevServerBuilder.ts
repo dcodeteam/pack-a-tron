@@ -8,8 +8,22 @@ import {
 export class DevServerBuilder extends AbstractConfigBuilder<
   undefined | WebpackDevServer.Configuration
 > {
+  protected allowedHost?: string;
+
   public constructor(options: BuilderOptions) {
     super("DevServerBuilder", options);
+
+    if (this.isWeb && this.isDev) {
+      const { clientProtocol, clientHost, clientServerPort } = this.config;
+      const { prepareUrls } = require("react-dev-utils/WebpackDevServerUtils");
+      const { lanUrlForConfig } = prepareUrls(
+        clientProtocol,
+        clientHost,
+        clientServerPort,
+      );
+
+      this.allowedHost = lanUrlForConfig;
+    }
   }
 
   public build(): undefined | WebpackDevServer.Configuration {
@@ -98,7 +112,7 @@ export class DevServerBuilder extends AbstractConfigBuilder<
         disableDotRule: true,
       },
 
-      // public: allowedHost, // TODO: Enable.
+      public: this.allowedHost,
 
       // Use reverse proxy.
       proxy: {
