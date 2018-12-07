@@ -67,6 +67,7 @@ export class StartTask extends BaseTask {
         );
       }
 
+      const openBrowser = require("react-dev-utils/openBrowser");
       const devServer = new WebpackDevServer(compiler, config.devServer);
 
       this.devServers.add(devServer);
@@ -78,6 +79,8 @@ export class StartTask extends BaseTask {
 
           reject(error);
         } else {
+          openBrowser(clientDevServerUrl);
+
           logger.log("Development server started at %s", clientDevServerUrl);
 
           resolve();
