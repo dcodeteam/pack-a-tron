@@ -150,6 +150,13 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
        * @see https://webpack.js.org/configuration/resolve/#resolve-extensions
        */
       extensions: [".tsx", ".ts", ".mjs", ".js", ".json"],
+
+      /**
+       * @see https://webpack.js.org/configuration/resolve/#resolve-mainfields
+       */
+      mainFields: this.isWeb
+        ? ["module", "browser", "main"]
+        : ["module", "main"],
     };
 
     /**
