@@ -73,10 +73,9 @@ export class BuildTask extends BaseTask {
   }
 
   public async run(): Promise<void> {
-    await this.apps.reduce(
-      (acc, x) => acc.then(() => this.runBuild(x)),
-      Promise.resolve(),
-    );
+    for (const app of this.apps) {
+      await this.runBuild(app);
+    }
   }
 
   public async stop(): Promise<void> {

@@ -3,6 +3,7 @@
   "extends": "@dc0de/eslint-config",
   "rules": {
     "global-require": "off",
+    "no-await-in-loop": "off",
     "no-restricted-syntax": "off",
     "import/no-dynamic-require": "off",
     "typescript/no-type-alias": "off",
@@ -10,12 +11,9 @@
     "no-shadow": [
       "error",
       {
+        // TODO: no-shadow
         "builtinGlobals": false,
-        "allow": [
-          // TODO: Re
-          "AppConfig",
-          "BuilderOptions"
-        ]
+        "allow": ["AppConfig", "BuilderOptions"]
       }
     ]
   }
