@@ -22,6 +22,10 @@ export interface TextCommand {
 }
 
 export function onTextEnter(commands: TextCommand[]): void {
+  if (commands.length === 0) {
+    return;
+  }
+
   const reader = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
