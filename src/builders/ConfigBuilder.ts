@@ -1,3 +1,5 @@
+import { relative, resolve } from "path";
+
 import {
   Configuration,
   Node,
@@ -82,6 +84,16 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
 
       libraryTarget: this.isNode ? "commonjs2" : "var",
       publicPath: paths.publicPath,
+
+      devtoolModuleFilenameTemplate: this.isWeb
+        ? "webpack://[namespace]/[resource-path]?[loaders]"
+        : info => {
+            const targetPath = this.isDev
+              ? resolve(info.absoluteResourcePath)
+              : relative(paths.srcDir, info.absoluteResourcePath);
+
+            return targetPath.replace(/\\/g, "/");
+          },
     };
 
     this.devServer = new DevServerBuilder(options);
