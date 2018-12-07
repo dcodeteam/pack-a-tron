@@ -9,6 +9,7 @@ const pkg = require("./package");
 
 const externals = new Set([
   "fs",
+  "net",
   "path",
   "readline",
   "child_process",
