@@ -7,14 +7,6 @@
     "no-restricted-syntax": "off",
     "import/no-dynamic-require": "off",
     "typescript/no-type-alias": "off",
-    "typescript/no-var-requires": "off",
-    "no-shadow": [
-      "error",
-      {
-        // TODO: no-shadow
-        "builtinGlobals": false,
-        "allow": ["AppConfig", "BuilderOptions"]
-      }
-    ]
+    "typescript/no-var-requires": "off"
   }
 }
