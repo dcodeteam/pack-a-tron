@@ -1,7 +1,7 @@
 {
   "license": "MIT",
   "name": "pack-o-tron",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "engines": {
     "node": ">=8.3.0"
   },
