@@ -3,7 +3,7 @@
   "name": "pack-o-tron",
   "version": "0.0.17",
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=8.3.0"
   },
   "main": "index.js",
   "bin": {
@@ -65,7 +65,6 @@
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-json": "^3.1.0",
     "rollup-plugin-node-resolve": "^4.0.0",
-    "rollup-plugin-prettier": "^0.6.0",
     "stylotron": "^0.0.13",
     "typescript": "^3.1.0",
     "webpack": "^4.26.0",

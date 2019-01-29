@@ -2,7 +2,6 @@
 
 const jsonPlugin = require("rollup-plugin-json");
 const babelPlugin = require("rollup-plugin-babel");
-const prettierPlugin = require("rollup-plugin-prettier");
 const nodeResolvePlugin = require("rollup-plugin-node-resolve");
 const pkg = require("./package");
 
@@ -51,7 +50,7 @@ function createConfig({ shebang, input, outputFile }) {
             {
               loose: true,
               modules: false,
-              targets: { node: "10.0.0" },
+              targets: { node: "8.3.0" },
             },
           ],
           "@babel/preset-typescript",
@@ -65,8 +64,6 @@ function createConfig({ shebang, input, outputFile }) {
         renderChunk: code =>
           !shebang ? code : `#!/usr/bin/env node\n\n${code}`,
       },
-
-      prettierPlugin({ parser: "babylon" }),
     ],
   };
 }
