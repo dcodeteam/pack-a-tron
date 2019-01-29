@@ -86,7 +86,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
       publicPath: paths.publicPath,
 
       devtoolModuleFilenameTemplate: this.isWeb
-        ? "webpack://[namespace]/[resource-path]?[loaders]"
+        ? "[namespace]/[resource-path]?[loaders]"
         : info => {
             const targetPath = this.isDev
               ? resolve(info.absoluteResourcePath)
