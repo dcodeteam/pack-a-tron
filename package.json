@@ -15,7 +15,7 @@
     "cli-build.js",
     "cli-start.js"
   ],
-  "description": "Universal packaer",
+  "description": "Universal packer",
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",
   "repository": "https://github.com/dcodeteam/pack-o-tron.git",
   "scripts": {
