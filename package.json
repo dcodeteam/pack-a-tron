@@ -19,13 +19,11 @@
   "author": "Umidbek Karimov <uma.karimov@gmail.com>",
   "repository": "https://github.com/dcodeteam/pack-o-tron.git",
   "scripts": {
-    "ci": "yarn lint && yarn check-typings",
-    "ci-fix": "yarn lint --fix && yarn check-typings",
-    "check-typings": "tsc --noEmit",
+    "ci": "yarn lint && yarn tsc",
+    "ci-fix": "yarn lint --fix && yarn tsc",
     "lint": "stylotron lint",
-    "start": "yarn build:bundle --watch",
-    "build": "yarn build:bundle",
-    "build:bundle": "rollup -c rollup.config.js"
+    "start": "yarn build --watch",
+    "build": "rollup -c rollup.config.js"
   },
   "dependencies": {
     "chalk": "^2.4.1",

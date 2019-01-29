@@ -1,13 +1,13 @@
 # Distributive
-
 /babel.js
 /cli.js
 /cli-start.js
 /cli-build.js
 
-# Logs
-/*.logs
-
 # NPM
 /*.tgz
 /node_modules/
+
+# Logs
+*.log
+*.logs

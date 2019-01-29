@@ -2,14 +2,14 @@
   // Setup source directory.
   "include": ["src/**/*.ts"],
   "compilerOptions": {
-    // Use for debugging and error tracking.
-    "sourceMap": true,
+    // Do not compile with TSC.
+    "noEmit": true,
     // Use latest ES typings.
-    "lib": ["es2018"],
+    "lib": ["esnext"],
     // Do not transpile modules.
-    "module": "es2015",
+    "module": "esnext",
     // Transpile with latest ES Features.
-    "target": "es2018",
+    "target": "esnext",
     // Allow to use node modules.
     "moduleResolution": "node",
 
