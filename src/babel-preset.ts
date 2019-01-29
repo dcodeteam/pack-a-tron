@@ -12,7 +12,7 @@ const modes = new Set(["test", "development", "production"]);
 
 const optionalDependencies = new Set(["@babel/preset-typescript"]);
 
-function createError(message: string) {
+function createError(message: string): Error {
   const error = new Error(`[pack-a-tron/babel] ERROR: ${message}`);
 
   // @ts-ignore
@@ -58,18 +58,20 @@ function parseOptions(options: unknown): Options {
 }
 
 interface BabelConfig {
-  presets: BabelDependency[];
-  plugins: BabelDependency[];
+  presets: Array<BabelDependency>;
+  plugins: Array<BabelDependency>;
 }
 
-function warning(message: string, ...args: unknown[]): void {
+function warning(message: string, ...args: Array<unknown>): void {
   // eslint-disable-next-line no-console
   console.error(message, ...args);
 }
 
-function resolveDependencies(dependencies: Array<null | BabelDependency>) {
-  const unresolved: string[] = [];
-  const resolved: BabelDependency[] = [];
+function resolveDependencies(
+  dependencies: Array<null | BabelDependency>,
+): Array<BabelDependency> {
+  const unresolved: Array<string> = [];
+  const resolved: Array<BabelDependency> = [];
 
   dependencies.forEach(dependency => {
     if (!dependency) {

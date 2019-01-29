@@ -29,12 +29,12 @@ export class CliLogger {
     }
   }
 
-  public log(message: string, ...args: unknown[]): void {
+  public log(message: string, ...args: Array<unknown>): void {
     // eslint-disable-next-line no-console
     console.log([this.label, message].join(" "), ...args);
   }
 
-  public alert(message: string, ...args: unknown[]): void {
+  public alert(message: string, ...args: Array<unknown>): void {
     this.log(chalk.red(message), ...args);
   }
 

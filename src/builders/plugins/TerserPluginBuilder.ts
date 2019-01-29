@@ -54,6 +54,7 @@ export class TerserPluginBuilder extends PluginBuilder {
           comments: false,
           // Turned on because emoji and regex is not minified properly using default
           // https://github.com/facebook/create-react-app/issues/2488
+          // eslint-disable-next-line @typescript-eslint/camelcase
           ascii_only: true,
         },
       },

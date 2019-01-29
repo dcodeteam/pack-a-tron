@@ -4,7 +4,7 @@ import { BuildTask } from "./tasks/BuildTask";
 
 export default build();
 
-async function build() {
+async function build(): Promise<void> {
   const config = await parseTaskConfigFile(process.cwd());
   const task = new BuildTask(config);
 

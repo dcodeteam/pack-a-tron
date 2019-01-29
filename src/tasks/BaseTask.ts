@@ -1,7 +1,7 @@
 import { TextCommand } from "../cli/CliUtils";
 
 export abstract class BaseTask {
-  public constructor(public readonly commands: TextCommand[]) {
+  public constructor(public readonly commands: Array<TextCommand>) {
     // Noop.
   }
 

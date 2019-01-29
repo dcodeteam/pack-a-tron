@@ -11,7 +11,7 @@ export class AppConfig {
   public static fromConfiguration(
     mode: BuilderMode,
     config: TaskConfig,
-  ): AppConfig[] {
+  ): Array<AppConfig> {
     const { srcDir, clientConfig, serverConfig } = config;
 
     if (clientConfig && serverConfig) {

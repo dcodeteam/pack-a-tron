@@ -15,8 +15,8 @@ export interface BabelLoader extends RuleSetLoader {
     cacheDirectory?: boolean;
     cacheCompression?: boolean;
 
-    presets: BabelDependency[];
-    plugins: BabelDependency[];
+    presets: Array<BabelDependency>;
+    plugins: Array<BabelDependency>;
   };
 }
 

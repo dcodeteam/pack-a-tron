@@ -4,7 +4,6 @@ const jsonPlugin = require("rollup-plugin-json");
 const babelPlugin = require("rollup-plugin-babel");
 const prettierPlugin = require("rollup-plugin-prettier");
 const nodeResolvePlugin = require("rollup-plugin-node-resolve");
-
 const pkg = require("./package");
 
 const externals = new Set([

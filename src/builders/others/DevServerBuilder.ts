@@ -1,4 +1,4 @@
-import * as WebpackDevServer from "webpack-dev-server";
+import WebpackDevServer from "webpack-dev-server";
 
 import {
   AbstractConfigBuilder,
@@ -16,6 +16,7 @@ export class DevServerBuilder extends AbstractConfigBuilder<
     if (this.isWeb && this.isDev) {
       const { clientProtocol, clientHost, clientServerPort } = this.config;
       const { prepareUrls } = require("react-dev-utils/WebpackDevServerUtils");
+
       const { lanUrlForConfig } = prepareUrls(
         clientProtocol,
         clientHost,
@@ -120,7 +121,7 @@ export class DevServerBuilder extends AbstractConfigBuilder<
           logLevel: "silent",
           target: config.clientServerUrl,
           onError: (err, req, res) => {
-            // eslint-disable-next-line typescript/no-explicit-any
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const { code } = err as any;
 
             if (code === "ECONNREFUSED" || code === "ECONNRESET") {
@@ -137,7 +138,7 @@ export class DevServerBuilder extends AbstractConfigBuilder<
         },
       },
 
-      before: (app, ...args: unknown[]) => {
+      before: (app, ...args: Array<unknown>) => {
         const errorOverlayMiddleware = require("react-dev-utils/errorOverlayMiddleware");
         const evalSourceMapMiddleware = require("react-dev-utils/evalSourceMapMiddleware");
 

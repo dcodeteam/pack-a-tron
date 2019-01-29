@@ -30,19 +30,19 @@ import { StyleRuleBuilder } from "./rules/StyleRuleBuilder";
 import { TSRuleBuilder } from "./rules/TSRuleBuilder";
 
 export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
-  private entry: string[];
+  private entry: Array<string>;
 
   private output: Output;
 
-  private rules: RuleBuilder[];
+  private rules: Array<RuleBuilder>;
 
   private resolve: Resolve;
 
   private optimization: Options.Optimization;
 
-  private minimizers: PluginBuilder[];
+  private minimizers: Array<PluginBuilder>;
 
-  private plugins: PluginBuilder[];
+  private plugins: Array<PluginBuilder>;
 
   private baseConfig: Configuration;
 
@@ -122,6 +122,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
           fs: "empty",
           net: "empty",
           tls: "empty",
+          // eslint-disable-next-line @typescript-eslint/camelcase
           child_process: "empty",
         };
 
@@ -246,7 +247,7 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
   /**
    * @see https://webpack.js.org/configuration/entry-context/#entry
    */
-  public modifyEntry(modifier: BuilderModifier<string[]>): this {
+  public modifyEntry(modifier: BuilderModifier<Array<string>>): this {
     this.entry = modifier(this.entry);
 
     return this;
@@ -281,13 +282,13 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
     return this;
   }
 
-  public modifyLoaders(modify: BuilderModifier<RuleBuilder[]>): this {
+  public modifyLoaders(modify: BuilderModifier<Array<RuleBuilder>>): this {
     this.rules = modify(this.rules);
 
     return this;
   }
 
-  public modifyPlugins(modify: BuilderModifier<PluginBuilder[]>): this {
+  public modifyPlugins(modify: BuilderModifier<Array<PluginBuilder>>): this {
     this.plugins = modify(this.plugins);
 
     return this;

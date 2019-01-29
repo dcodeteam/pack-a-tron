@@ -68,6 +68,7 @@ export class StartTask extends BaseTask {
       }
 
       const openBrowser = require("react-dev-utils/openBrowser");
+
       const devServer = new WebpackDevServer(compiler, config.devServer);
 
       this.devServers.add(devServer);
@@ -173,7 +174,7 @@ export class StartTask extends BaseTask {
     return child;
   }
 
-  public async run() {
+  public async run(): Promise<void> {
     const clientApps = this.apps.filter(x => x.config.target === "web");
     const serverApps = this.apps.filter(x => x.config.target === "node");
 
@@ -185,13 +186,13 @@ export class StartTask extends BaseTask {
     ]);
   }
 
-  public restart() {
+  public restart(): void {
     this.watchers.forEach(x => {
       x.invalidate();
     });
 
     this.devServers.forEach(x => {
-      // eslint-disable-next-line typescript/no-explicit-any
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (x as any).middleware.invalidate();
     });
   }

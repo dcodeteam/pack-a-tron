@@ -26,7 +26,7 @@ export interface TaskConfigServerOptions {
 
 export interface TaskConfigOptions {
   srcDir?: string;
-  workspaces?: YarnWorkspace[];
+  workspaces?: Array<YarnWorkspace>;
   client?: TaskConfigClientOptions;
   server?: TaskConfigServerOptions;
 }
@@ -128,7 +128,7 @@ export class TaskConfig {
     }`;
   }
 
-  public get clientDevServerUrl() {
+  public get clientDevServerUrl(): string {
     return `${this.clientProtocol}://${this.clientHost}:${
       this.clientDevServerPort
     }`;
@@ -138,7 +138,7 @@ export class TaskConfig {
     return this.options.server;
   }
 
-  public get workspaces(): YarnWorkspace[] {
+  public get workspaces(): Array<YarnWorkspace> {
     return this.options.workspaces || [];
   }
 }

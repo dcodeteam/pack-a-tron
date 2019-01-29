@@ -6,13 +6,13 @@ import {
 } from "../abstract/AbstractConfigBuilder";
 
 export class RuleBuilder extends AbstractConfigBuilder<null | RuleSetRule> {
-  protected use: RuleSetLoader[];
+  protected use: Array<RuleSetLoader>;
 
-  protected test: RuleSetCondition[];
+  protected test: Array<RuleSetCondition>;
 
-  protected include: RuleSetCondition[];
+  protected include: Array<RuleSetCondition>;
 
-  protected exclude: RuleSetCondition[];
+  protected exclude: Array<RuleSetCondition>;
 
   protected sideEffects?: boolean;
 

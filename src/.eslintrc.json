@@ -6,7 +6,6 @@
     "no-await-in-loop": "off",
     "no-restricted-syntax": "off",
     "import/no-dynamic-require": "off",
-    "typescript/no-type-alias": "off",
-    "typescript/no-var-requires": "off"
+    "@typescript-eslint/no-var-requires": "off"
   }
 }

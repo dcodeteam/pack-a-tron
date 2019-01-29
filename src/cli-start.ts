@@ -4,7 +4,7 @@ import { StartTask } from "./tasks/StartTask";
 
 export default start();
 
-async function start() {
+async function start(): Promise<void> {
   const config = await parseTaskConfigFile(process.cwd());
   const task = new StartTask(config);
 

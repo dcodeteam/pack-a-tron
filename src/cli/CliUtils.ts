@@ -1,6 +1,6 @@
 import * as readline from "readline";
 
-const EXIT_SIGNALS: NodeJS.Signals[] = ["SIGINT", "SIGTERM"];
+const EXIT_SIGNALS: Array<NodeJS.Signals> = ["SIGINT", "SIGTERM"];
 
 export function onExitSignal(fn: () => void | Promise<void>): void {
   EXIT_SIGNALS.forEach(signal => {
@@ -17,7 +17,7 @@ export interface TextCommand {
   readonly fn: () => void;
 }
 
-export function onTextEnter(commands: TextCommand[]): void {
+export function onTextEnter(commands: Array<TextCommand>): void {
   if (commands.length === 0) {
     return;
   }
