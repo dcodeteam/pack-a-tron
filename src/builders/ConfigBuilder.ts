@@ -17,6 +17,7 @@ import {
 } from "./abstract/AbstractConfigBuilder";
 import { DevServerBuilder } from "./others/DevServerBuilder";
 import { ExternalsBuilder } from "./others/ExternalsBuilder";
+import { BundleAnalyzerPluginBuilder } from "./plugins/BundleAnalyzerPluginBuilder";
 import { DefinePluginBuilder } from "./plugins/DefinePluginBuilder";
 import { HotModuleReplacementPluginBuilder } from "./plugins/HotModuleReplacementPluginBuilder";
 import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
@@ -210,6 +211,11 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
 
       // webpack.HotModuleReplacementPlugin
       new HotModuleReplacementPluginBuilder(options),
+
+      /**
+       * @see https://github.com/webpack-contrib/webpack-bundle-analyzer
+       */
+      new BundleAnalyzerPluginBuilder(options),
     ];
 
     this.baseConfig = {
