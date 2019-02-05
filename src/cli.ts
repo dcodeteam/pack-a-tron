@@ -1,27 +1,25 @@
-import { CommanderStatic } from "commander";
-
-import { version } from "../package.json";
+import yargs from "yargs";
 
 process.on("unhandledRejection", e => {
   throw e;
 });
 
-const commander: CommanderStatic = require("commander");
+yargs(process.argv.slice(2))
+  .help()
+  .strict()
+  .demandCommand()
+  .usage("Usage: $0 <cmd>")
 
-commander.version(version);
+  .command({
+    command: "start",
+    describe: "run development environment",
+    handler: () => require("./cli-start"),
+  })
 
-commander
-  .command("start")
-  .description("run development environment")
-  .action(() => require("./cli-start"));
+  .command({
+    command: "build",
+    describe: "build project",
+    handler: () => require("./cli-build"),
+  })
 
-commander
-  .command("build")
-  .description("build project")
-  .action(() => require("./cli-build"));
-
-commander.parse(process.argv);
-
-if (commander.args.length === 0) {
-  commander.help();
-}
+  .parse();
