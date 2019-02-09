@@ -18,6 +18,7 @@ import {
 import { DevServerBuilder } from "./others/DevServerBuilder";
 import { ExternalsBuilder } from "./others/ExternalsBuilder";
 import { BundleAnalyzerPluginBuilder } from "./plugins/BundleAnalyzerPluginBuilder";
+import { CircularDependencyPluginBuilder } from "./plugins/CircularDependencyPluginBuilder";
 import { DefinePluginBuilder } from "./plugins/DefinePluginBuilder";
 import { HotModuleReplacementPluginBuilder } from "./plugins/HotModuleReplacementPluginBuilder";
 import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
@@ -216,6 +217,11 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
        * @see https://github.com/webpack-contrib/webpack-bundle-analyzer
        */
       new BundleAnalyzerPluginBuilder(options),
+
+      /**
+       * @see https://github.com/aackerman/circular-dependency-plugin
+       */
+      new CircularDependencyPluginBuilder(options),
     ];
 
     this.baseConfig = {
