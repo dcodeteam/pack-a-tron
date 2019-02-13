@@ -25,7 +25,6 @@ import { ManifestPluginBuilder } from "./plugins/ManifestPluginBuilder";
 import { PluginBuilder } from "./plugins/PluginBuilder";
 import { TerserPluginBuilder } from "./plugins/TerserPluginBuilder";
 import { FileRuleBuilder } from "./rules/FileRuleBuilder";
-import { JsonRuleBuilder } from "./rules/JsonRuleBuilder";
 import { JSRuleBuilder } from "./rules/JSRuleBuilder";
 import { RuleBuilder } from "./rules/RuleBuilder";
 import { StyleRuleBuilder } from "./rules/StyleRuleBuilder";
@@ -131,9 +130,6 @@ export class ConfigBuilder extends AbstractConfigBuilder<Configuration> {
     this.performance = { hints: false };
 
     this.rules = [
-      // json-loader
-      new JsonRuleBuilder(options),
-
       // babel-loader
       new JSRuleBuilder(options)
         // Load only from `src` and local workspaces.
